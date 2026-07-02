@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA 2026 Çıkartma Albümü - interactive Takip</title>
+    <style>
+        :root {
+            --bg-main: #060813;
+            --bg-card: #0f1322;
+            --text-main: #f8fafc;
+            --text-muted: #64748b;
+            --border-color: #1e293b;
+            --success: #10b981;
+            --gold: #fbbf24;
+            --fw26-neon: linear-gradient(90deg, #ff007f, #7000ff, #00f0ff, #ffbc00);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 40px 20px;
+            background: radial-gradient(circle at top right, rgba(0, 240, 255, 0.1), transparent), 
+                        linear-gradient(135deg, #090d16 0%, #1e1b4b 100%);
+            border: 1px solid #2e1065;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 2026 Resmi Renk Çizgisi */
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 5px;
+            background: var(--fw26-neon);
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 22px;
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .search-input:focus {
+            border-color: #7000ff;
+            box-shadow: 0 0 15px rgba(112, 0, 255, 0.3);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 105%;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-card);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .search-result-item:hover {
+            background-color: #1e1b4b;
+        }
+
+        .search-result-item .team-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .stat-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 18px 20px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .stat-box h3 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .stat-box p {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .teams-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media(min-width: 768px) {
+            .teams-container { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media(min-width: 1200px) {
+            .teams-container { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        /* YENİLENEN TAKIM KARTLARI TASARIMI */
+        .team-box {
+            background: linear-gradient(135deg, var(--bg-card) 60%, color-mix(in srgb, var(--team-color, var(--bg-card)) 12%, var(--bg-card)));
+            border: 1px solid color-mix(in srgb, var(--team-color, var(--border-color)) 25%, var(--border-color));
+            border-top: 5px solid var(--team-color);
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+            transition: all 0.3s ease;
+        }
+
+        .team-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px color-mix(in srgb, var(--team-color) 15%, rgba(0,0,0,0.4));
+        }
+
+        .team-header {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: color-mix(in srgb, var(--team-color) 14%, rgba(255,255,255,0.02));
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        .slot {
+            background-color: #070b12;
+            border: 1px solid var(--border-color);
+            padding: 9px 6px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            text-align: left;
+            padding-left: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #cbd5e1;
+        }
+
+        .slot:hover {
+            border-color: color-mix(in srgb, var(--team-color) 50%, #64748b);
+            background-color: #0d1522;
+        }
+
+        .slot.owned {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #ffffff;
+            border-color: #34d399;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+        }
+
+        .slot.special {
+            background: linear-gradient(135deg, #b45309, #f59e0b);
+            color: #ffffff;
+            border-color: #fbbf24;
+            font-weight: bold;
+        }
+        
+        .slot.special.owned {
+            background: linear-gradient(135deg, #059669, #10b981);
+            border-color: #34d399;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+        }
+        
+        .slot-num {
+            display: inline-block;
+            width: 48px;
+            color: #64748b;
+            font-weight: bold;
+            font-size: 0.72rem;
+            border-right: 1px solid #1e293b;
+            margin-right: 8px;
+        }
+        .slot.owned .slot-num, .slot.special .slot-num {
+            color: rgba(255,255,255,0.85);
+            border-right: 1px solid rgba(255,255,255,0.3);
+        }
+
+        @keyframes highlight-pulse {
+            0% { transform: scale(1); box-shadow: 0 0px 0px var(--team-color); }
+            50% { transform: scale(1.04); box-shadow: 0 0 20px var(--team-color); }
+            100% { transform: scale(1); box-shadow: 0 0px 0px var(--team-color); }
+        }
+        .highlight-animation {
+            animation: highlight-pulse 1.5s ease-in-out 2;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>FIFA WORLD CUP 2026</h1>
+        <p>United 2026 • Resmi Oyuncu Kadroları ve İnteraktif Çıkartma Takip Otomasyonu</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="search-input" class="search-input" placeholder="Oyuncu ismi ara... (Örn: Arda, Messi, Mbappe)">
+        <div id="search-results" class="search-results"></div>
+    </div>
+
+    <div class="stats-panel">
+        <div class="stat-box" style="border-bottom: 3px solid #7000ff;"><h3>Toplam Kart</h3><p id="total-slots">0</p></div>
+        <div class="stat-box" style="border-bottom: 3px solid #10b981;"><h3 style="color:#10b981;">Yapıştırılan</h3><p id="owned-slots">0</p></div>
+        <div class="stat-box" style="border-bottom: 3px solid #f43f5e;"><h3 style="color:#f43f5e;">Eksik Yuva</h3><p id="missing-slots">0</p></div>
+        <div class="stat-box" style="border-bottom: 3px solid var(--gold); border-color: var(--gold);"><h3>Tamamlanma</h3><p id="ratio-slots">%0</p></div>
+    </div>
+
+    <div class="teams-container" id="album-container"></div>
+
+    <script>
+        const dataset = {
+            "ARG": { "name": "Arjantin", "flag": "🇦🇷", "color": "#43a1d5", "players": ["Emiliano Martínez", "Nahuel Molina", "Cristian Romero", "Nicolás Otamendi", "Nicolás Tagliafico", "Leandro Paredes", "Enzo Fernández", "Alexis Mac Allister", "Rodrigo De Paul", "Exequiel Palacios", "Giuliano Simeone", "Nico Paz", "Franco Mastantuono", "Nico González", "Lionel Messi", "Julián Álvarez", "Lautaro Martínez", "Ángel Di María"] },
+            "AUS": { "name": "Avustralya", "flag": "🇦🇺", "color": "#ffcd00", "players": ["Mathew Ryan", "Joe Gauci", "Harry Souttar", "Kye Rowles", "Aziz Behich", "Gethin Jones", "Jackson Irvine", "Keanu Baccus", "Connor Metcalfe", "Ajdin Hrustic", "Riley McGree", "Craig Goodwin", "Mitchell Duke", "Brandon Borrello", "Kusini Yengi", "Nestory Irankunda", "Samuel Silvera", "Martin Boyle"] },
+            "AUT": { "name": "Avusturya", "flag": "🇦🇹", "color": "#ef3340", "players": ["Alexander Schlager", "Patrick Pentz", "David Alaba", "Kevin Danso", "Philipp Lienhart", "Stefan Posch", "Philipp Mwene", "Alexander Prass", "Xaver Schlager", "Marcel Sabitzer", "Florian Grillitsch", "Nicolas Seiwald", "Romano Schmid", "Patrick Wimmer", "Christoph Baumgartner", "Marko Arnautović", "Maximilian Wöber", "Michael Gregoritsch"] },
+            "BEL": { "name": "Belçika", "flag": "🇧🇪", "color": "#e30613", "players": ["Koen Casteels", "Wout Faes", "Zeno Debast", "Arthur Theate", "Timothy Castagne", "Orel Mangala", "Amadou Onana", "Kevin De Bruyne", "Dodi Lukebakio", "Jérémy Doku", "Romelu Lukaku", "Loïs Openda", "Leandro Trossard", "Charles De Ketelaere", "Johan Bakayoko", "Maxim De Cuyper", "Roméo Lavia", "Matz Sels"] },
+            "BIH": { "name": "Bosna-Hersek", "flag": "🇧🇦", "color": "#00239c", "players": ["Nikola Vasilj", "Kenan Pirić", "Sead Kolašinac", "Anel Ahmedhodžić", "Dennis Hadžikadunić", "Jusuf Gazibegovic", "Amar Dedić", "Rade Krunić", "Benjamin Tahirović", "Haris Hajradinović", "Denis Huseinbašić", "Armin Gigović", "Edin Džeko", "Ermedin Demirović", "Haris Tabaković", "Said Hamulić", "Dal Varešanović", "Luka Menalo"] },
+            "BRA": { "name": "Brezilya", "flag": "🇧🇷", "color": "#ffdf00", "players": ["Alisson Becker", "Ederson", "Marquinhos", "Gabriel Magalhães", "Éder Militão", "Danilo", "Guilherme Arana", "Lucas Beraldo", "Bruno Guimarães", "Lucas Paquetá", "Douglas Luiz", "João Gomes", "Andreas Pereira", "Vinícius Júnior", "Rodrygo", "Endrick", "Raphinha", "Gabriel Martinelli"] },
+            "CAN": { "name": "Kanada", "flag": "🇨🇦", "color": "#ff0000", "players": ["Maxime Crépeau", "Dayne St. Clair", "Alphonso Davies", "Alistair Johnston", "Kamal Miller", "Moïse Bombito", "Derek Cornelius", "Richie Laryea", "Stephen Eustáquio", "Ismaël Koné", "Jonathan Osorio", "Samuel Piette", "Ali Ahmed", "Jonathan David", "Cyle Larin", "Tajon Buchanan", "Liam Millar", "Jacob Shaffelburg"] },
+            "CPV": { "name": "Yeşil Burun Adaları", "flag": "🇨🇻", "color": "#003893", "players": ["Vozinha", "Dylan Silva", "Roberto Lopes", "Stopira", "Logan Costa", "Diney Borges", "Steven Moreira", "Jamiro Monteiro", "Kenny Rocha Santos", "Patrick Andrade", "Deroy Duarte", "Kevin Pina", "Ryan Mendes", "Garry Rodrigues", "Bebé", "Jovane Cabral", "Bryan Teixeira", "Gilson Tavares"] },
+            "COL": { "name": "Kolombiya", "flag": "🇨🇴", "color": "#fcd116", "players": ["Camilo Vargas", "Daniel Muñoz", "Davinson Sánchez", "Carlos Cuesta", "Johan Mojica", "Richard Ríos", "Jefferson Lerma", "Jhon Arias", "James Rodríguez", "Luis Díaz", "Jhon Córdoba", "Jhon Durán", "Luis Sinisterra", "Juan Fernando Quintero", "Yerry Mina", "Santiago Arias", "Mateus Uribe", "Kevin Mier"] },
+            "CRO": { "name": "Hırvatistan", "flag": "🇭🇷", "color": "#ff0000", "players": ["Dominik Livaković", "Josip Stanišić", "Josip Šutalo", "Marin Pongračić", "Joško Gvardiol", "Luka Modrić", "Mateo Kovačić", "Mario Pašaliá", "Luka Sučić", "Andrej Kramarić", "Ante Budimir", "Ivan Perişić", "Lovro Majer", "Petar Sučić", "Martin Baturina", "Igor Matanović", "Borna Sosa", "Nediljko Labrović"] },
+            "CUW": { "name": "Curaçao", "flag": "🇨🇼", "color": "#4189dd", "players": ["Eloy Room", "Tyrick Bodak", "Cuco Martina", "Roshon van Eijma", "Jurien Gaari", "Sherel Floranus", "Bradley Martis", "Vurnon Anita", "Leandro Bacuna", "Juninho Bacuna", "Godwin Vine", "Kevin Felida", "Rangelo Janga", "Kenji Gorré", "Gervane Kastaneer", "Brandley Kuwas", "Jearl Margaritha", "Anthony van den Hurk"] },
+            "CZE": { "name": "Çekya", "flag": "🇨🇿", "color": "#11457e", "players": ["Jindřich Staněk", "Matěj Kovář", "Tomáš Holeš", "David Zima", "Ladislav Krejčí", "Martin Vitík", "Vladimír Coufal", "David Jurásek", "Tomáš Souček", "Antonín Barák", "Lukáš Provod", "Michal Sadílek", "Pavel Šulc", "Patrik Schick", "Adam Hložek", "Jan Kuchta", "Tomáš Chorý", "Václav Çerný"] },
+            "ECU": { "name": "Ekvador", "flag": "🇪🇨", "color": "#ffcc00", "players": ["Hernán Galíndez", "Ángelo Preciado", "Félix Torres", "Willian Pacho", "Piero Hincapié", "Alan Franco", "Moisés Caicedo", "Kendry Páez", "Jeremy Sarmiento", "Enner Valencia", "Kevin Rodríguez", "John Yeboah", "Carlos Gruezo", "Alan Minda", "Jhojan Julio", "Joel Ordóñez", "Alexander Domínguez", "Robert Arboleda"] },
+            "EGY": { "name": "Mısır", "flag": "🇪🇬", "color": "#ce1126", "players": ["Mohamed El Shenawy", "Mohamed Hany", "Ramy Rabia", "Mohamed Abdelmonem", "Mohamed Hamdy", "Marwan Attia", "Hamdi Fathi", "Trézéguet", "Mohamed Salah", "Mostafa Mohamed", "Omar Marmoush", "Zizo", "Nasser Maher", "Emam Ashour", "Ibrahim Adel", "Mohamed Shehata", "Ahmed Hegazi", "Mostafa Shobeir"] },
+            "ENG": { "name": "İngiltere", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "color": "#ffffff", "players": ["Jordan Pickford", "Kyle Walker", "John Stones", "Marc Guéhi", "Kieran Trippier", "Declan Rice", "Kobbie Mainoo", "Bukayo Saka", "Jude Bellingham", "Phil Foden", "Harry Kane", "Cole Palmer", "Anthony Gordon", "Ollie Watkins", "Trent Alexander-Arnold", "Ezri Konsa", "Conor Gallagher", "Dean Henderson"] },
+            "FRA": { "name": "Fransa", "flag": "🇫🇷", "color": "#002395", "players": ["Mike Maignan", "Brice Samba", "William Saliba", "Dayot Upamecano", "Ibrahima Konaté", "Jules Koundé", "Théo Hernandez", "Benjamin Pavard", "Aurélien Tchouaméni", "Eduardo Camavinga", "N'Golo Kanté", "Adrien Rabiot", "Warren Zaïre-Emery", "Kylian Mbappé", "Antoine Griezmann", "Ousmane Dembélé", "Marcus Thuram", "Bradley Barcola"] },
+            "GER": { "name": "Almanya", "flag": "🇩🇪", "color": "#ffffff", "players": ["Marc-André ter Stegen", "Alexander Nübel", "Antonio Rüdiger", "Jonathan Tah", "Nico Schlotterbeck", "Waldemar Anton", "Joshua Kimmich", "David Raum", "Robert Andrich", "Pascal Groß", "Aleksandar Pavlović", "İlkay Gündoğan", "Florian Wirtz", "Jamal Musiala", "Kai Havertz", "Niclas Füllkrug", "Leroy Sané", "Serge Gnabry"] },
+            "GHA": { "name": "Gana", "flag": "🇬🇭", "color": "#fcd116", "players": ["Lawrence Ati-Zigi", "Alidu Seidu", "Alexander Djiku", "Mohammed Salisu", "Gideon Mensah", "Thomas Partey", "Salis Abdul Samed", "Mohammed Kudus", "Ernest Nuamah", "Jordan Ayew", "Antoine Semenyo", "Iñaki Williams", "Tariq Lamptey", "Elisha Owusu", "Abdul Fatawu Issahaku", "André Ayew", "Ebenezer Ofori", "Richard Ofori"] },
+            "HAI": { "name": "Haiti", "flag": "🇭🇹", "color": "#4176df", "players": ["Johny Placide", "Alexandre Pierre", "Carlens Arcus", "Ricardo Adé", "Garissone Innocent", "Jean-Kévin Duverne", "Bryan Alceus", "Leverton Pierre", "Danley Jean Jacques", "Carl Fred Sainté", "Frantzdy Pierrot", "Duckens Nazon", "Dany Jean", "Louicius Don Deedson", "Mondy Prunier", "Fabrice Picault", "Jeppe Simonsen", "Steeven Saba"] },
+            "IRN": { "name": "İran", "flag": "🇮🇷", "color": "#da2128", "players": ["Alireza Beiranvand", "Sadegh Moharrami", "Milad Mohammadi", "Hossein Kanaanizadegan", "Ehsan Hajsafi", "Saeid Ezatolahi", "Alireza Jahanbakhsh", "Saman Ghoddos", "Mehdi Taremi", "Ali Gholizadeh", "Sardar Azmoun", "Mehdi Ghayedi", "Shahriyar Moghanlou", "Omid Noorafkan", "Shojae Khalilzadeh", "Hossein Hosseini", "Ramin Rezaeian", "Majid Hosseini"] },
+            "IRQ": { "name": "Irak", "flag": "🇮🇶", "color": "#007a3d", "players": ["Jalal Hassan", "Ahmed Basil", "Rebin Sulaka", "Saad Natiq", "Ali Adnan", "Hussein Ali", "Zaid Tahseen", "Merchas Doski", "Amir Al-Ammari", "Osama Rashid", "Bashar Resan", "Ibrahim Bayesh", "Zidane Iqbal", "Youssef Amyn", "Aymen Hussein", "Ali Al-Hamadi", "Mohanad Ali", "Montader Madjed"] },
+            "CIV": { "name": "Fildişi Sahili", "flag": "🇨🇮", "color": "#ff8200", "players": ["Yahia Fofana", "Wilfried Singo", "Emmanuel Agbadou", "Evan Ndicka", "Christopher Operi", "Franck Kessié", "Seko Fofana", "Oumar Diakité", "Amad Diallo", "Simon Adingra", "Sébastien Haller", "Evann Guessand", "Jean Evrard Kouassi", "Jérémie Boga", "Ibrahim Sangaré", "Odilon Kossounou", "Ousmane Diomande", "Badra Ali Sangaré"] },
+            "JPN": { "name": "Japonya", "flag": "🇯🇵", "color": "#004b87", "players": ["Zion Suzuki", "Yukinari Sugawara", "Ko Itakura", "Koki Machida", "Keito Nakamura", "Wataru Endo", "Hidemasa Morita", "Ritsu Doan", "Takumi Minamino", "Kaoru Mitoma", "Koki Ogawa", "Daichi Kamada", "Takefusa Kubo", "Ayase Ueda", "Reo Hatate", "Shogo Taniguchi", "Kosei Tani", "Keisuke Osako"] },
+            "JOR": { "name": "Ürdün", "flag": "🇯🇴", "color": "#ce1126", "players": ["Yazeed Abulaila", "Abdallah Nasib", "Yazan Al-Arab", "Salem Al-Ajalin", "Ehsan Haddad", "Nizar Al-Rashdan", "Noor Al-Rawabdeh", "Mahmoud Al-Mardi", "Ali Olwan", "Musa Al-Taamari", "Yazan Al-Naimat", "Ibrahim Sadeh", "Mohammad Abu Zrayq", "Saed Al-Rosan", "Anas Al-Awadat", "Baha' Abdel-Rahman", "Anas Bani Yaseen", "Abdallah Al-Fakhouri"] },
+            "MEX": { "name": "Meksika", "flag": "🇲🇽", "color": "#006847", "players": ["Guillermo Ochoa", "Luis Malagón", "César Montes", "Johan Vásquez", "Jorge Sánchez", "Kevin Álvarez", "Jesús Gallardo", "Edson Álvarez", "Luis Chávez", "Érick Sánchez", "Orbelin Pineda", "Luis Romo", "Uriel Antuna", "Hirving Lozano", "Raúl Jiménez", "Alexis Vega", "Roberto Alvarado", "Santiago Giménez"] },
+            "MAR": { "name": "Fas", "flag": "🇲🇦", "color": "#c1272d", "players": ["Yassine Bounou", "Munir Mohamedi", "Achraf Hakimi", "Nayef Aguerd", "Romain Saïss", "Noussair Mazraoui", "Yahia Attiyat Allah", "Chadi Riad", "Sofyan Amrabat", "Azzedine Ounahi", "Bilal El Khannouss", "Brahim Díaz", "Hakim Ziyech", "Amine Harit", "Youssef En-Nesyri", "Ayoub El Kaabi", "Sofiane Boufal", "Abde Ezzalzouli"] },
+            "NED": { "name": "Hollanda", "flag": "🇳🇱", "color": "#ff4f00", "players": ["Bart Verbruggen", "Denzel Dumfries", "Stefan de Vrij", "Virgil van Dijk", "Nathan Aké", "Jerdy Schouten", "Tijjani Reijnders", "Xavi Simons", "Jeremie Frimpong", "Cody Gakpo", "Memphis Depay", "Wout Weghorst", "Donyell Malen", "Joey Veerman", "Micky van de Ven", "Lutsharel Geertruida", "Justin Bijlow", "Mark Flekken"] },
+            "NZL": { "name": "Yeni Zelanda", "flag": "🇳🇿", "color": "#ffffff", "players": ["Alex Paulsen", "Michael Boxall", "Liberato Cacace", "Nando Pijnaker", "Tommy Smith", "Matt Garbett", "Joe Bell", "Sarpreet Singh", "Chris Wood", "Kosta Barbarouses", "Ben Waine", "Elijah Just", "Callum McCowatt", "Tim Payne", "Dalton Wilkins", "Ben Old", "Oliver Sail", "Alex Rufer"] },
+            "NOR": { "name": "Norveç", "flag": "🇳🇴", "color": "#ef2b2d", "players": ["Ørjan Nyland", "Julian Ryerson", "Kristoffer Ajer", "Marcus Holmgren Pedersen", "David Møller Wolfe", "Torbjørn Heggem", "Martin Ødegaard", "Sander Berge", "Andreas Schjelderup", "Patrick Berg", "Erling Haaland", "Alexander Sørloth", "Aron Dønnum", "Jørgen Strand Larsen", "Antonio Nusa", "Oscar Bobb", "Leo Østigård", "Egil Selvik"] },
+            "PAN": { "name": "Panama", "flag": "🇵🇦", "color": "#da121a", "players": ["Orlando Mosquera", "César Samudio", "José Córdoba", "Andrés Andrade", "Fidel Escobar", "Michael Murillo", "Éric Davis", "César Blackman", "Adalberto Carrasquilla", "Aníbal Godoy", "Cristian Martínez", "Jovani Welch", "Edgardo Fariña", "Ismael Díaz", "José Fajardo", "Cecilio Waterman", "Eduardo Guerrero", "César Yanis"] },
+            "PAR": { "name": "Paraguay", "flag": "🇵🇾", "color": "#d52b1e", "players": ["Carlos Coronel", "Gatito Fernández", "Gustavo Gómez", "Junior Alonso", "Fabián Balbuena", "Omar Alderete", "Matías Espinoza", "Gustavo Velázquez", "Mathías Villasanti", "Richard Sánchez", "Andrés Cubas", "Diego Gómez", "Alejandro Romero Gamarra", "Miguel Almirón", "Julio Enciso", "Adam Bareiro", "Alex Arce", "Derlis González"] },
+            "POR": { "name": "Portekiz", "flag": "🇵🇹", "color": "#ff0000", "players": ["Diogo Costa", "João Cancelo", "Rúben Dias", "Pepe", "Nuno Mendes", "João Palhinha", "Vitinha", "Bruno Fernandes", "Bernardo Silva", "Rafael Leão", "Cristiano Ronaldo", "Diogo Jota", "João Félix", "Francisco Conceição", "Rúben Neves", "Nélson Semedo", "Gonçalo Inácio", "José Sá"] },
+            "QAT": { "name": "Katar", "flag": "🇶🇦", "color": "#8a1538", "players": ["Meshaal Barsham", "Saad Al-Sheeb", "Boualem Khoukhi", "Lucas Mendes", "Al-Mahdi Ali Mukhtar", "Pedro Miguel", "Tarek Salman", "Homam Ahmed", "Abdulaziz Hatem", "Jassem Gaber", "Ahmed Fathy", "Mohammed Waad", "Mustafa Meshaal", "Akram Afif", "Almoez Ali", "Hassan Al-Haydos", "Yusuf Abdurisag", "Ahmed Alaaeldin"] },
+            "ALG": { "name": "Cezayir", "flag": "🇩🇿", "color": "#006633", "players": ["Alexis Guendouz", "Ramy Bensebaini", "Youcef Atal", "Rayan Aït-Nouri", "Mohamed Amine Tougai", "Ismaël Bennacer", "Houssem Aouar", "Hicham Boudaoui", "Riyad Mahrez", "Saïd Benrahma", "Anis Hadj Moussa", "Amine Gouiri", "Sofiane Feghouli", "Aïssa Mandi", "Said Belkhiter", "Anthony Mandrea", "Jaouen Hadjam", "Mustapha Zeghba"] },
+            "KSA": { "name": "Suudi Arabistan", "flag": "🇸🇦", "color": "#006c35", "players": ["Mohammed Al-Owais", "Ahmed Al-Kassar", "Ali Lajami", "Ali Al-Bulaihi", "Saud Abdulhamid", "Yasser Al-Shahrani", "Sultan Al-Ghannam", "Hassan Tambakti", "Abdulelah Al-Malki", "Mohamed Kanno", "Abdullah Otayf", "Salman Al-Faraj", "Sami Al-Najei", "Salem Al-Dawsari", "Firas Al-Buraikan", "Saleh Al-Shehri", "Abdulrahman Ghareeb", "Mohammed Maran"] },
+            "SCO": { "name": "İskoçya", "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "color": "#005eb8", "players": ["Angus Gunn", "Zander Clark", "Andrew Robertson", "Kieran Tierney", "Jack Hendry", "Ryan Porteous", "Anthony Ralston", "John Souttar", "Scott McTominay", "John McGinn", "Billy Gilmour", "Callum McGregor", "Kenny McLean", "Lewis Ferguson", "Che Adams", "Lawrence Shankland", "Lyndon Dykes", "Ryan Christie"] },
+            "SEN": { "name": "Senegal", "flag": "🇸🇳", "color": "#fcd116", "players": ["Édouard Mendy", "Mory Diaw", "Kalidou Koulibaly", "Abdou Diallo", "Moussa Niakhaté", "Formose Mendy", "Ismail Jakobs", "Fodé Ballo-Touré", "Idrissa Gueye", "Lamine Camara", "Pape Matar Sarr", "Nampalys Mendy", "Pathé Ciss", "Sadio Mané", "Ismaïla Sarr", "Nicolas Jackson", "Iliman Ndiaye", "Habib Diallo"] },
+            "RSA": { "name": "Güney Afrika", "flag": "🇿🇦", "color": "#007a4d", "players": ["Ronwen Williams", "Sipho Chaine", "Aubrey Modiba", "Mothobi Mvala", "Khuliso Mudau", "Grant Kekana", "Nkosinathi Sibisi", "Terrence Mashego", "Teboho Mokoena", "Sphephelo Sithole", "Thabang Monare", "Bathusi Aubaas", "Sipho Mbule", "Patrick Maswanganyi", "Lyle Foster", "Percy Tau", "Iqraam Rayners", "Oswin Appollis"] },
+            "KOR": { "name": "Güney Kore", "flag": "🇰🇷", "color": "#cd2e3a", "players": ["Hyeon-woo Jo", "Seung-gyu Kim", "Min-jae Kim", "Yu-min Cho", "Young-woo Seol", "Han-beom Lee", "Tae-seok Lee", "Myung-jae Lee", "Jae-sung Lee", "In-beom Hwang", "Kang-in Lee", "Seung-ho Paik", "Woo-yeong Jeong", "Dong-gyeong Lee", "Gue-sung Cho", "Heung-min Son", "Hee-chan Hwang", "Hyeon-gyu Oh"] },
+            "ESP": { "name": "İspanya", "flag": "🇪🇸", "color": "#c60b1e", "players": ["Unai Simón", "David Raya", "Robin Le Normand", "Aymeric Laporte", "Dani Carvajal", "Álex Grimaldo", "Marc Cucurella", "Dani Vivian", "Rodri", "Fabián Ruiz", "Pedri", "Dani Olmo", "Martin Zubimendi", "Mikel Merino", "Lamine Yamal", "Nico Williams", "Álvaro Morata", "Ferran Torres"] },
+            "SWE": { "name": "İsveç", "flag": "🇸🇪", "color": "#006aa7", "players": ["Viktor Johansson", "Linus Wahlqvist Egnell", "Isak Hien", "Gabriel Gudmundsson", "Ken Sema", "Dejan Kulusevski", "Anton Salétros", "Yasin Ayari", "Carl Starfelt", "Niclas Eliasson", "Alexander Isak", "Viktor Gyökeres", "Lucas Bergvall", "Hugo Larsson", "Gustaf Nilsson", "Emil Krafth", "Robin Olsen", "Viktor Claesson"] },
+            "SUI": { "name": "İsviçre", "flag": "🇨🇭", "color": "#da291c", "players": ["Yann Sommer", "Gregor Kobel", "Manuel Akanji", "Fabian Schär", "Ricardo Rodríguez", "Nico Elvedi", "Silvan Widmer", "Leonidas Stergiou", "Granit Xhaka", "Remo Freuler", "Denis Zakaria", "Michel Aebischer", "Xherdan Shaqiri", "Ruben Vargas", "Dan Ndoye", "Breel Embolo", "Zeki Amdouni", "Kwadwo Duah"] },
+            "TUN": { "name": "Tunus", "flag": "🇹🇳", "color": "#e70013", "players": ["Amanallah Memmiche", "Raed Bouchniba", "Yassine Meriah", "Montassar Talbi", "Ali Abdi", "Ferjani Sassi", "Ellyes Skhiri", "Aïssa Laïdouni", "Mohamed Ali Ben Romdhane", "Hamza Rafia", "Sayfallah Ltaief", "Ali Youssef", "Haythem Jouini", "Elias Saad", "Dylan Bronn", "Yan Valery", "Ali Maâloul", "Mouez Hassen"] },
+            "TUR": { "name": "Türkiye", "flag": "🇹🇷", "color": "#e30a17", "players": ["Mert Günok", "Uğurcan Çakır", "Merih Demiral", "Abdülkerim Bardakcı", "Samet Akaydin", "Ferdi Kadıoğlu", "Zeki Çelik", "Mert Müldür", "Hakan Çalhanoğlu", "İsmail Yüksek", "Salih Özcan", "Orkun Kökçü", "Arda Güler", "Kenan Yıldız", "Barış Alper Yılmaz", "Kerem Aktürkoğlu", "Semih Kılıçsoy", "Cenk Tosun"] },
+            "USA": { "name": "Amerika Birleşik Devletleri", "flag": "🇺🇸", "color": "#002868", "players": ["Matt Turner", "Ethan Horvath", "Antonee Robinson", "Tim Ream", "Chris Richards", "Cameron Carter-Vickers", "Joe Scally", "Sergiño Dest", "Weston McKennie", "Tyler Adams", "Yunus Musah", "Gio Reyna", "Johnny Cardoso", "Christian Pulisic", "Timothy Weah", "Folarin Balogun", "Ricardo Pepi", "Brenden Aaronson"] },
+            "URU": { "name": "Uruguay", "flag": "🇺🇾", "color": "#55b3ff", "players": ["Sergio Rochet", "Santiago Mele", "José María Giménez", "Ronald Araújo", "Sebastián Cáceres", "Mathías Olivera", "Matías Viña", "Guillermo Varela", "Federico Valverde", "Rodrigo Bentancur", "Manuel Ugarte", "Nicolás de la Cruz", "Giorgian de Arrascaeta", "Facundo Pellistri", "Maximiliano Araújo", "Darwin Núñez", "Luis Suárez", "Facundo Torres"] },
+            "UZB": { "name": "Özbekistan", "flag": "🇺🇿", "color": "#00b5e2", "players": ["Utkir Yusupov", "Husniddin Aliqulov", "Abdukodir Khusanov", "Umar Eshmurodov", "Sherzod Nasrullaev", "Akramjon Komilov", "Odiljon Hamrobekov", "Otabek Shukurov", "Abbosbek Fayzullaev", "Jaloliddin Masharipov", "Eldor Shomurodov", "Azizbek Turgunboev", "Khojimat Erkinov", "Oston Urunov", "Igor Sergeev", "Abduvohid Nematov", "Rustam Ashurmatov", "Farrukh Sayfiev"] },
+            "COD": { "name": "Demokratik Kongo Cumhuriyeti", "flag": "🇨🇩", "color": "#007fff", "players": ["Timothy Fayulu", "Arthur Masuaku", "Chancel Mbemba", "Inonga Baka", "Gédéon Kalulu", "Samuel Moutoussamy", "Charles Pickel", "Meshack Elia", "Théo Bongonda", "Yoane Wissa", "Simon Banza", "Fiston Mayele", "Samuel Essende", "Edo Kayembe", "Joris Kayembe", "Nathaniel Mbuku", "Meschack Elia", "Dimitry Bertaud"] }
+        };
+
+        const container = document.getElementById('album-container');
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+
+        // Dinamik Kart Üretimi
+        Object.keys(dataset).forEach(code => {
+            const team = dataset[code];
+            const box = document.createElement('div');
+            box.className = 'team-box';
+            box.style.setProperty('--team-color', team.color);
+
+            let slotsHtml = `
+                <div class="slot special" data-id="${code}_1"><span class="slot-num">${code} 1</span>LOGM (Logo)</div>
+                <div class="slot special" data-id="${code}_2"><span class="slot-num">${code} 2</span>KADRO FOTO</div>
+            `;
+
+            team.players.forEach((playerName, index) => {
+                const stickerNum = index + 3;
+                slotsHtml += `
+                    <div class="slot" data-id="${code}_${stickerNum}">
+                        <span class="slot-num">${code} ${stickerNum}</span>${playerName}
+                    </div>`;
+            });
+
+            box.innerHTML = `
+                <div class="team-header" style="color: ${team.color === '#ffffff' ? '#ffffff' : 'color-mix(in srgb, ' + team.color + ' 80%, #ffffff)'}">
+                    <span>${team.flag} ${team.name} (${code})</span>
+                </div>
+                <div class="slots-grid">${slotsHtml}</div>
+            `;
+            container.appendChild(box);
+        });
+
+        // Canlı Arama Motoru (Kesilen Kısmın Tamamı)
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            searchResults.innerHTML = '';
+
+            if (query.length < 1) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            let matches = [];
+
+            Object.keys(dataset).forEach(code => {
+                const team = dataset[code];
+                
+                // Logoları ve kadro fotoğraflarını da isme göre aratabilmek için dahil ediyoruz
+                if (`${team.name} logo`.toLowerCase().includes(query) || "logo".includes(query)) {
+                    matches.push({ name: "Takım Logosu", teamName: team.name, flag: team.flag, id: `${code}_1` });
+                }
+                if (`${team.name} kadro foto`.toLowerCase().includes(query) || "kadro".includes(query)) {
+                    matches.push({ name: "Kadro Fotoğrafı", teamName: team.name, flag: team.flag, id: `${code}_2` });
+                }
+
+                team.players.forEach((playerName, index) => {
+                    if (playerName.toLowerCase().includes(query)) {
+                        matches.push({
+                            name: playerName,
+                            teamName: team.name,
+                            flag: team.flag,
+                            id: `${code}_${index + 3}`
+                        });
+                    }
+                });
+            });
+
+            if (matches.length > 0) {
+                matches.forEach(player => {
+                    const item = document.createElement('div');
+                    item.className = 'search-result-item';
+                    item.innerHTML = `
+                        <span>${player.name}</span>
+                        <span class="team-info">${player.flag} ${player.teamName}</span>
+                    `;
+                    
+                    // Arama sonucuna tıklanınca karta git, parlat ve otomatik yapıştır
+                    item.addEventListener('click', () => {
+                        const targetSlot = document.querySelector(`[data-id="${player.id}"]`);
+                        if (targetSlot) {
+                            targetSlot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            
+                            if (!targetSlot.classList.contains('owned')) {
+                                targetSlot.classList.add('owned');
+                                localStorage.setItem(player.id, '1');
+                                updateStats();
+                            }
+
+                            targetSlot.classList.add('highlight-animation');
+                            setTimeout(() => {
+                                targetSlot.classList.remove('highlight-animation');
+                            }, 3000); // 1.5s'lik animasyon x2 tekrar için 3 saniye
+                        }
+                        
+                        searchInput.value = '';
+                        searchResults.style.display = 'none';
+                    });
+
+                    searchResults.appendChild(item);
+                });
+                searchResults.style.display = 'block';
+            } else {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // Dışarı tıklanınca arama kutusunu kapatma
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // Tıklama ile Kart Açma / Kapatma (Hafıza Tetikleyicili)
+        document.body.addEventListener('click', function(e) {
+            const slot = e.target.closest('.slot');
+            if (slot) {
+                const id = slot.getAttribute('data-id');
+                
+                slot.classList.toggle('owned');
+                if(slot.classList.contains('owned')) {
+                    localStorage.setItem(id, '1');
+                } else {
+                    localStorage.removeItem(id);
+                }
+                updateStats();
+            }
+        });
+
+        // Kayıtlı Kartları Hafızadan Geri Yükleme
+        document.querySelectorAll('.slot').forEach(slot => {
+            const id = slot.getAttribute('data-id');
+            if(localStorage.getItem(id) === '1') {
+                slot.classList.add('owned');
+            }
+        });
+
+        // İstatistikleri Canlı Güncelleyen Fonksiyon
+        function updateStats() {
+            const total = document.querySelectorAll('.slot').length;
+            const owned = document.querySelectorAll('.slot.owned').length;
+            const missing = total - owned;
+            const ratio = total > 0 ? ((owned / total) * 100).toFixed(1) : 0;
+
+            document.getElementById('total-slots').textContent = total;
+            document.getElementById('owned-slots').textContent = owned;
+            document.getElementById('missing-slots').textContent = missing;
+            document.getElementById('ratio-slots').textContent = `%${ratio}`;
+        }
+
+        // İlk açılışta istatistikleri hesapla
+        updateStats();
+    </script>
+</body>
+</html>

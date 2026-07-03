@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIFA 2026 Çıkartma Albümü - interactive Takip</title>
+    <title>FIFA 2026 Çıkartma Albümü - İnteraktif Takip</title>
     <style>
         :root {
             --bg-main: #060813;
@@ -46,7 +46,6 @@
             overflow: hidden;
         }
 
-        /* 2026 Resmi Renk Çizgisi */
         header::before {
             content: '';
             position: absolute;
@@ -172,7 +171,6 @@
             .teams-container { grid-template-columns: repeat(3, 1fr); }
         }
 
-        /* YENİLENEN TAKIM KARTLARI TASARIMI */
         .team-box {
             background: linear-gradient(135deg, var(--bg-card) 60%, color-mix(in srgb, var(--team-color, var(--bg-card)) 12%, var(--bg-card)));
             border: 1px solid color-mix(in srgb, var(--team-color, var(--border-color)) 25%, var(--border-color));
@@ -181,6 +179,7 @@
             padding: 15px;
             box-shadow: 0 6px 16px rgba(0,0,0,0.25);
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .team-box:hover {
@@ -200,6 +199,29 @@
             background-color: color-mix(in srgb, var(--team-color) 14%, rgba(255,255,255,0.02));
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            padding-right: 55px; /* Rozete yer açmak için */
+        }
+
+        /* Modern, Sade ve Kararlı Ülke Rozeti Tasarımı */
+        .modern-badge {
+            position: absolute;
+            top: 21px;
+            right: 25px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #ffffff;
+            width: 36px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: color-mix(in srgb, var(--team-color) 40%, rgba(0, 0, 0, 0.6));
+            border: 1px solid color-mix(in srgb, var(--team-color) 60%, rgba(255, 255, 255, 0.2));
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            letter-spacing: 0.5px;
+            user-select: none;
+            pointer-events: none;
         }
 
         .slots-grid {
@@ -252,7 +274,7 @@
         
         .slot-num {
             display: inline-block;
-            width: 48px;
+            width: 52px;
             color: #64748b;
             font-weight: bold;
             font-size: 0.72rem;
@@ -278,11 +300,11 @@
 
     <header>
         <h1>FIFA WORLD CUP 2026</h1>
-        <p>United 2026 • Resmi Oyuncu Kadroları ve İnteraktif Çıkartma Takip Otomasyonu</p>
+        <p>United 2026 • Resmi Komple Checklist Takip Otomasyonu (1-20 Tam Düzen)</p>
     </header>
 
     <div class="search-container">
-        <input type="text" id="search-input" class="search-input" placeholder="Oyuncu ismi ara... (Örn: Arda, Messi, Mbappe)">
+        <input type="text" id="search-input" class="search-input" placeholder="Oyuncu, Logo veya Ülke ara...">
         <div id="search-results" class="search-results"></div>
     </div>
 
@@ -297,90 +319,131 @@
 
     <script>
         const dataset = {
-            "ARG": { "name": "Arjantin", "flag": "🇦🇷", "color": "#43a1d5", "players": ["Emiliano Martínez", "Nahuel Molina", "Cristian Romero", "Nicolás Otamendi", "Nicolás Tagliafico", "Leandro Paredes", "Enzo Fernández", "Alexis Mac Allister", "Rodrigo De Paul", "Exequiel Palacios", "Giuliano Simeone", "Nico Paz", "Franco Mastantuono", "Nico González", "Lionel Messi", "Julián Álvarez", "Lautaro Martínez", "Ángel Di María"] },
-            "AUS": { "name": "Avustralya", "flag": "🇦🇺", "color": "#ffcd00", "players": ["Mathew Ryan", "Joe Gauci", "Harry Souttar", "Kye Rowles", "Aziz Behich", "Gethin Jones", "Jackson Irvine", "Keanu Baccus", "Connor Metcalfe", "Ajdin Hrustic", "Riley McGree", "Craig Goodwin", "Mitchell Duke", "Brandon Borrello", "Kusini Yengi", "Nestory Irankunda", "Samuel Silvera", "Martin Boyle"] },
-            "AUT": { "name": "Avusturya", "flag": "🇦🇹", "color": "#ef3340", "players": ["Alexander Schlager", "Patrick Pentz", "David Alaba", "Kevin Danso", "Philipp Lienhart", "Stefan Posch", "Philipp Mwene", "Alexander Prass", "Xaver Schlager", "Marcel Sabitzer", "Florian Grillitsch", "Nicolas Seiwald", "Romano Schmid", "Patrick Wimmer", "Christoph Baumgartner", "Marko Arnautović", "Maximilian Wöber", "Michael Gregoritsch"] },
-            "BEL": { "name": "Belçika", "flag": "🇧🇪", "color": "#e30613", "players": ["Koen Casteels", "Wout Faes", "Zeno Debast", "Arthur Theate", "Timothy Castagne", "Orel Mangala", "Amadou Onana", "Kevin De Bruyne", "Dodi Lukebakio", "Jérémy Doku", "Romelu Lukaku", "Loïs Openda", "Leandro Trossard", "Charles De Ketelaere", "Johan Bakayoko", "Maxim De Cuyper", "Roméo Lavia", "Matz Sels"] },
-            "BIH": { "name": "Bosna-Hersek", "flag": "🇧🇦", "color": "#00239c", "players": ["Nikola Vasilj", "Kenan Pirić", "Sead Kolašinac", "Anel Ahmedhodžić", "Dennis Hadžikadunić", "Jusuf Gazibegovic", "Amar Dedić", "Rade Krunić", "Benjamin Tahirović", "Haris Hajradinović", "Denis Huseinbašić", "Armin Gigović", "Edin Džeko", "Ermedin Demirović", "Haris Tabaković", "Said Hamulić", "Dal Varešanović", "Luka Menalo"] },
-            "BRA": { "name": "Brezilya", "flag": "🇧🇷", "color": "#ffdf00", "players": ["Alisson Becker", "Ederson", "Marquinhos", "Gabriel Magalhães", "Éder Militão", "Danilo", "Guilherme Arana", "Lucas Beraldo", "Bruno Guimarães", "Lucas Paquetá", "Douglas Luiz", "João Gomes", "Andreas Pereira", "Vinícius Júnior", "Rodrygo", "Endrick", "Raphinha", "Gabriel Martinelli"] },
-            "CAN": { "name": "Kanada", "flag": "🇨🇦", "color": "#ff0000", "players": ["Maxime Crépeau", "Dayne St. Clair", "Alphonso Davies", "Alistair Johnston", "Kamal Miller", "Moïse Bombito", "Derek Cornelius", "Richie Laryea", "Stephen Eustáquio", "Ismaël Koné", "Jonathan Osorio", "Samuel Piette", "Ali Ahmed", "Jonathan David", "Cyle Larin", "Tajon Buchanan", "Liam Millar", "Jacob Shaffelburg"] },
-            "CPV": { "name": "Yeşil Burun Adaları", "flag": "🇨🇻", "color": "#003893", "players": ["Vozinha", "Dylan Silva", "Roberto Lopes", "Stopira", "Logan Costa", "Diney Borges", "Steven Moreira", "Jamiro Monteiro", "Kenny Rocha Santos", "Patrick Andrade", "Deroy Duarte", "Kevin Pina", "Ryan Mendes", "Garry Rodrigues", "Bebé", "Jovane Cabral", "Bryan Teixeira", "Gilson Tavares"] },
-            "COL": { "name": "Kolombiya", "flag": "🇨🇴", "color": "#fcd116", "players": ["Camilo Vargas", "Daniel Muñoz", "Davinson Sánchez", "Carlos Cuesta", "Johan Mojica", "Richard Ríos", "Jefferson Lerma", "Jhon Arias", "James Rodríguez", "Luis Díaz", "Jhon Córdoba", "Jhon Durán", "Luis Sinisterra", "Juan Fernando Quintero", "Yerry Mina", "Santiago Arias", "Mateus Uribe", "Kevin Mier"] },
-            "CRO": { "name": "Hırvatistan", "flag": "🇭🇷", "color": "#ff0000", "players": ["Dominik Livaković", "Josip Stanišić", "Josip Šutalo", "Marin Pongračić", "Joško Gvardiol", "Luka Modrić", "Mateo Kovačić", "Mario Pašaliá", "Luka Sučić", "Andrej Kramarić", "Ante Budimir", "Ivan Perişić", "Lovro Majer", "Petar Sučić", "Martin Baturina", "Igor Matanović", "Borna Sosa", "Nediljko Labrović"] },
-            "CUW": { "name": "Curaçao", "flag": "🇨🇼", "color": "#4189dd", "players": ["Eloy Room", "Tyrick Bodak", "Cuco Martina", "Roshon van Eijma", "Jurien Gaari", "Sherel Floranus", "Bradley Martis", "Vurnon Anita", "Leandro Bacuna", "Juninho Bacuna", "Godwin Vine", "Kevin Felida", "Rangelo Janga", "Kenji Gorré", "Gervane Kastaneer", "Brandley Kuwas", "Jearl Margaritha", "Anthony van den Hurk"] },
-            "CZE": { "name": "Çekya", "flag": "🇨🇿", "color": "#11457e", "players": ["Jindřich Staněk", "Matěj Kovář", "Tomáš Holeš", "David Zima", "Ladislav Krejčí", "Martin Vitík", "Vladimír Coufal", "David Jurásek", "Tomáš Souček", "Antonín Barák", "Lukáš Provod", "Michal Sadílek", "Pavel Šulc", "Patrik Schick", "Adam Hložek", "Jan Kuchta", "Tomáš Chorý", "Václav Çerný"] },
-            "ECU": { "name": "Ekvador", "flag": "🇪🇨", "color": "#ffcc00", "players": ["Hernán Galíndez", "Ángelo Preciado", "Félix Torres", "Willian Pacho", "Piero Hincapié", "Alan Franco", "Moisés Caicedo", "Kendry Páez", "Jeremy Sarmiento", "Enner Valencia", "Kevin Rodríguez", "John Yeboah", "Carlos Gruezo", "Alan Minda", "Jhojan Julio", "Joel Ordóñez", "Alexander Domínguez", "Robert Arboleda"] },
-            "EGY": { "name": "Mısır", "flag": "🇪🇬", "color": "#ce1126", "players": ["Mohamed El Shenawy", "Mohamed Hany", "Ramy Rabia", "Mohamed Abdelmonem", "Mohamed Hamdy", "Marwan Attia", "Hamdi Fathi", "Trézéguet", "Mohamed Salah", "Mostafa Mohamed", "Omar Marmoush", "Zizo", "Nasser Maher", "Emam Ashour", "Ibrahim Adel", "Mohamed Shehata", "Ahmed Hegazi", "Mostafa Shobeir"] },
-            "ENG": { "name": "İngiltere", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "color": "#ffffff", "players": ["Jordan Pickford", "Kyle Walker", "John Stones", "Marc Guéhi", "Kieran Trippier", "Declan Rice", "Kobbie Mainoo", "Bukayo Saka", "Jude Bellingham", "Phil Foden", "Harry Kane", "Cole Palmer", "Anthony Gordon", "Ollie Watkins", "Trent Alexander-Arnold", "Ezri Konsa", "Conor Gallagher", "Dean Henderson"] },
-            "FRA": { "name": "Fransa", "flag": "🇫🇷", "color": "#002395", "players": ["Mike Maignan", "Brice Samba", "William Saliba", "Dayot Upamecano", "Ibrahima Konaté", "Jules Koundé", "Théo Hernandez", "Benjamin Pavard", "Aurélien Tchouaméni", "Eduardo Camavinga", "N'Golo Kanté", "Adrien Rabiot", "Warren Zaïre-Emery", "Kylian Mbappé", "Antoine Griezmann", "Ousmane Dembélé", "Marcus Thuram", "Bradley Barcola"] },
-            "GER": { "name": "Almanya", "flag": "🇩🇪", "color": "#ffffff", "players": ["Marc-André ter Stegen", "Alexander Nübel", "Antonio Rüdiger", "Jonathan Tah", "Nico Schlotterbeck", "Waldemar Anton", "Joshua Kimmich", "David Raum", "Robert Andrich", "Pascal Groß", "Aleksandar Pavlović", "İlkay Gündoğan", "Florian Wirtz", "Jamal Musiala", "Kai Havertz", "Niclas Füllkrug", "Leroy Sané", "Serge Gnabry"] },
-            "GHA": { "name": "Gana", "flag": "🇬🇭", "color": "#fcd116", "players": ["Lawrence Ati-Zigi", "Alidu Seidu", "Alexander Djiku", "Mohammed Salisu", "Gideon Mensah", "Thomas Partey", "Salis Abdul Samed", "Mohammed Kudus", "Ernest Nuamah", "Jordan Ayew", "Antoine Semenyo", "Iñaki Williams", "Tariq Lamptey", "Elisha Owusu", "Abdul Fatawu Issahaku", "André Ayew", "Ebenezer Ofori", "Richard Ofori"] },
-            "HAI": { "name": "Haiti", "flag": "🇭🇹", "color": "#4176df", "players": ["Johny Placide", "Alexandre Pierre", "Carlens Arcus", "Ricardo Adé", "Garissone Innocent", "Jean-Kévin Duverne", "Bryan Alceus", "Leverton Pierre", "Danley Jean Jacques", "Carl Fred Sainté", "Frantzdy Pierrot", "Duckens Nazon", "Dany Jean", "Louicius Don Deedson", "Mondy Prunier", "Fabrice Picault", "Jeppe Simonsen", "Steeven Saba"] },
-            "IRN": { "name": "İran", "flag": "🇮🇷", "color": "#da2128", "players": ["Alireza Beiranvand", "Sadegh Moharrami", "Milad Mohammadi", "Hossein Kanaanizadegan", "Ehsan Hajsafi", "Saeid Ezatolahi", "Alireza Jahanbakhsh", "Saman Ghoddos", "Mehdi Taremi", "Ali Gholizadeh", "Sardar Azmoun", "Mehdi Ghayedi", "Shahriyar Moghanlou", "Omid Noorafkan", "Shojae Khalilzadeh", "Hossein Hosseini", "Ramin Rezaeian", "Majid Hosseini"] },
-            "IRQ": { "name": "Irak", "flag": "🇮🇶", "color": "#007a3d", "players": ["Jalal Hassan", "Ahmed Basil", "Rebin Sulaka", "Saad Natiq", "Ali Adnan", "Hussein Ali", "Zaid Tahseen", "Merchas Doski", "Amir Al-Ammari", "Osama Rashid", "Bashar Resan", "Ibrahim Bayesh", "Zidane Iqbal", "Youssef Amyn", "Aymen Hussein", "Ali Al-Hamadi", "Mohanad Ali", "Montader Madjed"] },
-            "CIV": { "name": "Fildişi Sahili", "flag": "🇨🇮", "color": "#ff8200", "players": ["Yahia Fofana", "Wilfried Singo", "Emmanuel Agbadou", "Evan Ndicka", "Christopher Operi", "Franck Kessié", "Seko Fofana", "Oumar Diakité", "Amad Diallo", "Simon Adingra", "Sébastien Haller", "Evann Guessand", "Jean Evrard Kouassi", "Jérémie Boga", "Ibrahim Sangaré", "Odilon Kossounou", "Ousmane Diomande", "Badra Ali Sangaré"] },
-            "JPN": { "name": "Japonya", "flag": "🇯🇵", "color": "#004b87", "players": ["Zion Suzuki", "Yukinari Sugawara", "Ko Itakura", "Koki Machida", "Keito Nakamura", "Wataru Endo", "Hidemasa Morita", "Ritsu Doan", "Takumi Minamino", "Kaoru Mitoma", "Koki Ogawa", "Daichi Kamada", "Takefusa Kubo", "Ayase Ueda", "Reo Hatate", "Shogo Taniguchi", "Kosei Tani", "Keisuke Osako"] },
-            "JOR": { "name": "Ürdün", "flag": "🇯🇴", "color": "#ce1126", "players": ["Yazeed Abulaila", "Abdallah Nasib", "Yazan Al-Arab", "Salem Al-Ajalin", "Ehsan Haddad", "Nizar Al-Rashdan", "Noor Al-Rawabdeh", "Mahmoud Al-Mardi", "Ali Olwan", "Musa Al-Taamari", "Yazan Al-Naimat", "Ibrahim Sadeh", "Mohammad Abu Zrayq", "Saed Al-Rosan", "Anas Al-Awadat", "Baha' Abdel-Rahman", "Anas Bani Yaseen", "Abdallah Al-Fakhouri"] },
-            "MEX": { "name": "Meksika", "flag": "🇲🇽", "color": "#006847", "players": ["Guillermo Ochoa", "Luis Malagón", "César Montes", "Johan Vásquez", "Jorge Sánchez", "Kevin Álvarez", "Jesús Gallardo", "Edson Álvarez", "Luis Chávez", "Érick Sánchez", "Orbelin Pineda", "Luis Romo", "Uriel Antuna", "Hirving Lozano", "Raúl Jiménez", "Alexis Vega", "Roberto Alvarado", "Santiago Giménez"] },
-            "MAR": { "name": "Fas", "flag": "🇲🇦", "color": "#c1272d", "players": ["Yassine Bounou", "Munir Mohamedi", "Achraf Hakimi", "Nayef Aguerd", "Romain Saïss", "Noussair Mazraoui", "Yahia Attiyat Allah", "Chadi Riad", "Sofyan Amrabat", "Azzedine Ounahi", "Bilal El Khannouss", "Brahim Díaz", "Hakim Ziyech", "Amine Harit", "Youssef En-Nesyri", "Ayoub El Kaabi", "Sofiane Boufal", "Abde Ezzalzouli"] },
-            "NED": { "name": "Hollanda", "flag": "🇳🇱", "color": "#ff4f00", "players": ["Bart Verbruggen", "Denzel Dumfries", "Stefan de Vrij", "Virgil van Dijk", "Nathan Aké", "Jerdy Schouten", "Tijjani Reijnders", "Xavi Simons", "Jeremie Frimpong", "Cody Gakpo", "Memphis Depay", "Wout Weghorst", "Donyell Malen", "Joey Veerman", "Micky van de Ven", "Lutsharel Geertruida", "Justin Bijlow", "Mark Flekken"] },
-            "NZL": { "name": "Yeni Zelanda", "flag": "🇳🇿", "color": "#ffffff", "players": ["Alex Paulsen", "Michael Boxall", "Liberato Cacace", "Nando Pijnaker", "Tommy Smith", "Matt Garbett", "Joe Bell", "Sarpreet Singh", "Chris Wood", "Kosta Barbarouses", "Ben Waine", "Elijah Just", "Callum McCowatt", "Tim Payne", "Dalton Wilkins", "Ben Old", "Oliver Sail", "Alex Rufer"] },
-            "NOR": { "name": "Norveç", "flag": "🇳🇴", "color": "#ef2b2d", "players": ["Ørjan Nyland", "Julian Ryerson", "Kristoffer Ajer", "Marcus Holmgren Pedersen", "David Møller Wolfe", "Torbjørn Heggem", "Martin Ødegaard", "Sander Berge", "Andreas Schjelderup", "Patrick Berg", "Erling Haaland", "Alexander Sørloth", "Aron Dønnum", "Jørgen Strand Larsen", "Antonio Nusa", "Oscar Bobb", "Leo Østigård", "Egil Selvik"] },
-            "PAN": { "name": "Panama", "flag": "🇵🇦", "color": "#da121a", "players": ["Orlando Mosquera", "César Samudio", "José Córdoba", "Andrés Andrade", "Fidel Escobar", "Michael Murillo", "Éric Davis", "César Blackman", "Adalberto Carrasquilla", "Aníbal Godoy", "Cristian Martínez", "Jovani Welch", "Edgardo Fariña", "Ismael Díaz", "José Fajardo", "Cecilio Waterman", "Eduardo Guerrero", "César Yanis"] },
-            "PAR": { "name": "Paraguay", "flag": "🇵🇾", "color": "#d52b1e", "players": ["Carlos Coronel", "Gatito Fernández", "Gustavo Gómez", "Junior Alonso", "Fabián Balbuena", "Omar Alderete", "Matías Espinoza", "Gustavo Velázquez", "Mathías Villasanti", "Richard Sánchez", "Andrés Cubas", "Diego Gómez", "Alejandro Romero Gamarra", "Miguel Almirón", "Julio Enciso", "Adam Bareiro", "Alex Arce", "Derlis González"] },
-            "POR": { "name": "Portekiz", "flag": "🇵🇹", "color": "#ff0000", "players": ["Diogo Costa", "João Cancelo", "Rúben Dias", "Pepe", "Nuno Mendes", "João Palhinha", "Vitinha", "Bruno Fernandes", "Bernardo Silva", "Rafael Leão", "Cristiano Ronaldo", "Diogo Jota", "João Félix", "Francisco Conceição", "Rúben Neves", "Nélson Semedo", "Gonçalo Inácio", "José Sá"] },
-            "QAT": { "name": "Katar", "flag": "🇶🇦", "color": "#8a1538", "players": ["Meshaal Barsham", "Saad Al-Sheeb", "Boualem Khoukhi", "Lucas Mendes", "Al-Mahdi Ali Mukhtar", "Pedro Miguel", "Tarek Salman", "Homam Ahmed", "Abdulaziz Hatem", "Jassem Gaber", "Ahmed Fathy", "Mohammed Waad", "Mustafa Meshaal", "Akram Afif", "Almoez Ali", "Hassan Al-Haydos", "Yusuf Abdurisag", "Ahmed Alaaeldin"] },
-            "ALG": { "name": "Cezayir", "flag": "🇩🇿", "color": "#006633", "players": ["Alexis Guendouz", "Ramy Bensebaini", "Youcef Atal", "Rayan Aït-Nouri", "Mohamed Amine Tougai", "Ismaël Bennacer", "Houssem Aouar", "Hicham Boudaoui", "Riyad Mahrez", "Saïd Benrahma", "Anis Hadj Moussa", "Amine Gouiri", "Sofiane Feghouli", "Aïssa Mandi", "Said Belkhiter", "Anthony Mandrea", "Jaouen Hadjam", "Mustapha Zeghba"] },
-            "KSA": { "name": "Suudi Arabistan", "flag": "🇸🇦", "color": "#006c35", "players": ["Mohammed Al-Owais", "Ahmed Al-Kassar", "Ali Lajami", "Ali Al-Bulaihi", "Saud Abdulhamid", "Yasser Al-Shahrani", "Sultan Al-Ghannam", "Hassan Tambakti", "Abdulelah Al-Malki", "Mohamed Kanno", "Abdullah Otayf", "Salman Al-Faraj", "Sami Al-Najei", "Salem Al-Dawsari", "Firas Al-Buraikan", "Saleh Al-Shehri", "Abdulrahman Ghareeb", "Mohammed Maran"] },
-            "SCO": { "name": "İskoçya", "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "color": "#005eb8", "players": ["Angus Gunn", "Zander Clark", "Andrew Robertson", "Kieran Tierney", "Jack Hendry", "Ryan Porteous", "Anthony Ralston", "John Souttar", "Scott McTominay", "John McGinn", "Billy Gilmour", "Callum McGregor", "Kenny McLean", "Lewis Ferguson", "Che Adams", "Lawrence Shankland", "Lyndon Dykes", "Ryan Christie"] },
-            "SEN": { "name": "Senegal", "flag": "🇸🇳", "color": "#fcd116", "players": ["Édouard Mendy", "Mory Diaw", "Kalidou Koulibaly", "Abdou Diallo", "Moussa Niakhaté", "Formose Mendy", "Ismail Jakobs", "Fodé Ballo-Touré", "Idrissa Gueye", "Lamine Camara", "Pape Matar Sarr", "Nampalys Mendy", "Pathé Ciss", "Sadio Mané", "Ismaïla Sarr", "Nicolas Jackson", "Iliman Ndiaye", "Habib Diallo"] },
-            "RSA": { "name": "Güney Afrika", "flag": "🇿🇦", "color": "#007a4d", "players": ["Ronwen Williams", "Sipho Chaine", "Aubrey Modiba", "Mothobi Mvala", "Khuliso Mudau", "Grant Kekana", "Nkosinathi Sibisi", "Terrence Mashego", "Teboho Mokoena", "Sphephelo Sithole", "Thabang Monare", "Bathusi Aubaas", "Sipho Mbule", "Patrick Maswanganyi", "Lyle Foster", "Percy Tau", "Iqraam Rayners", "Oswin Appollis"] },
-            "KOR": { "name": "Güney Kore", "flag": "🇰🇷", "color": "#cd2e3a", "players": ["Hyeon-woo Jo", "Seung-gyu Kim", "Min-jae Kim", "Yu-min Cho", "Young-woo Seol", "Han-beom Lee", "Tae-seok Lee", "Myung-jae Lee", "Jae-sung Lee", "In-beom Hwang", "Kang-in Lee", "Seung-ho Paik", "Woo-yeong Jeong", "Dong-gyeong Lee", "Gue-sung Cho", "Heung-min Son", "Hee-chan Hwang", "Hyeon-gyu Oh"] },
-            "ESP": { "name": "İspanya", "flag": "🇪🇸", "color": "#c60b1e", "players": ["Unai Simón", "David Raya", "Robin Le Normand", "Aymeric Laporte", "Dani Carvajal", "Álex Grimaldo", "Marc Cucurella", "Dani Vivian", "Rodri", "Fabián Ruiz", "Pedri", "Dani Olmo", "Martin Zubimendi", "Mikel Merino", "Lamine Yamal", "Nico Williams", "Álvaro Morata", "Ferran Torres"] },
-            "SWE": { "name": "İsveç", "flag": "🇸🇪", "color": "#006aa7", "players": ["Viktor Johansson", "Linus Wahlqvist Egnell", "Isak Hien", "Gabriel Gudmundsson", "Ken Sema", "Dejan Kulusevski", "Anton Salétros", "Yasin Ayari", "Carl Starfelt", "Niclas Eliasson", "Alexander Isak", "Viktor Gyökeres", "Lucas Bergvall", "Hugo Larsson", "Gustaf Nilsson", "Emil Krafth", "Robin Olsen", "Viktor Claesson"] },
-            "SUI": { "name": "İsviçre", "flag": "🇨🇭", "color": "#da291c", "players": ["Yann Sommer", "Gregor Kobel", "Manuel Akanji", "Fabian Schär", "Ricardo Rodríguez", "Nico Elvedi", "Silvan Widmer", "Leonidas Stergiou", "Granit Xhaka", "Remo Freuler", "Denis Zakaria", "Michel Aebischer", "Xherdan Shaqiri", "Ruben Vargas", "Dan Ndoye", "Breel Embolo", "Zeki Amdouni", "Kwadwo Duah"] },
-            "TUN": { "name": "Tunus", "flag": "🇹🇳", "color": "#e70013", "players": ["Amanallah Memmiche", "Raed Bouchniba", "Yassine Meriah", "Montassar Talbi", "Ali Abdi", "Ferjani Sassi", "Ellyes Skhiri", "Aïssa Laïdouni", "Mohamed Ali Ben Romdhane", "Hamza Rafia", "Sayfallah Ltaief", "Ali Youssef", "Haythem Jouini", "Elias Saad", "Dylan Bronn", "Yan Valery", "Ali Maâloul", "Mouez Hassen"] },
-            "TUR": { "name": "Türkiye", "flag": "🇹🇷", "color": "#e30a17", "players": ["Mert Günok", "Uğurcan Çakır", "Merih Demiral", "Abdülkerim Bardakcı", "Samet Akaydin", "Ferdi Kadıoğlu", "Zeki Çelik", "Mert Müldür", "Hakan Çalhanoğlu", "İsmail Yüksek", "Salih Özcan", "Orkun Kökçü", "Arda Güler", "Kenan Yıldız", "Barış Alper Yılmaz", "Kerem Aktürkoğlu", "Semih Kılıçsoy", "Cenk Tosun"] },
-            "USA": { "name": "Amerika Birleşik Devletleri", "flag": "🇺🇸", "color": "#002868", "players": ["Matt Turner", "Ethan Horvath", "Antonee Robinson", "Tim Ream", "Chris Richards", "Cameron Carter-Vickers", "Joe Scally", "Sergiño Dest", "Weston McKennie", "Tyler Adams", "Yunus Musah", "Gio Reyna", "Johnny Cardoso", "Christian Pulisic", "Timothy Weah", "Folarin Balogun", "Ricardo Pepi", "Brenden Aaronson"] },
-            "URU": { "name": "Uruguay", "flag": "🇺🇾", "color": "#55b3ff", "players": ["Sergio Rochet", "Santiago Mele", "José María Giménez", "Ronald Araújo", "Sebastián Cáceres", "Mathías Olivera", "Matías Viña", "Guillermo Varela", "Federico Valverde", "Rodrigo Bentancur", "Manuel Ugarte", "Nicolás de la Cruz", "Giorgian de Arrascaeta", "Facundo Pellistri", "Maximiliano Araújo", "Darwin Núñez", "Luis Suárez", "Facundo Torres"] },
-            "UZB": { "name": "Özbekistan", "flag": "🇺🇿", "color": "#00b5e2", "players": ["Utkir Yusupov", "Husniddin Aliqulov", "Abdukodir Khusanov", "Umar Eshmurodov", "Sherzod Nasrullaev", "Akramjon Komilov", "Odiljon Hamrobekov", "Otabek Shukurov", "Abbosbek Fayzullaev", "Jaloliddin Masharipov", "Eldor Shomurodov", "Azizbek Turgunboev", "Khojimat Erkinov", "Oston Urunov", "Igor Sergeev", "Abduvohid Nematov", "Rustam Ashurmatov", "Farrukh Sayfiev"] },
-            "COD": { "name": "Demokratik Kongo Cumhuriyeti", "flag": "🇨🇩", "color": "#007fff", "players": ["Timothy Fayulu", "Arthur Masuaku", "Chancel Mbemba", "Inonga Baka", "Gédéon Kalulu", "Samuel Moutoussamy", "Charles Pickel", "Meshack Elia", "Théo Bongonda", "Yoane Wissa", "Simon Banza", "Fiston Mayele", "Samuel Essende", "Edo Kayembe", "Joris Kayembe", "Nathaniel Mbuku", "Meschack Elia", "Dimitry Bertaud"] }
+            "ALG": { "name": "Cezayir", "color": "#006633", "items": ["Team Logo", "Alexis Guendouz", "Ramy Bensebaini", "Youcef Atal", "Rayan Aït-Nouri", "Mohamed Amine Tougai", "Aïssa Mandi", "Ismael Bennacer", "Houssem Aquar", "Hicham Boudaoui", "Ramiz Zerrouki", "Nabil Bentalab", "Team Photo", "Farés Chaibi", "Riyad Mahrez", "Said Benrahma", "Anis Hadj Moussa", "Amine Gouiri", "Baghdad Bounedjah", "Mohammed Amoura"] },
+            "ARG": { "name": "Arjantin", "color": "#43a1d5", "items": ["Team Logo", "Emiliano Martinez", "Nahuel Molina", "Cristian Romero", "Nicolas Otamendi", "Nicolas Tagliafico", "Leonardo Balerdi", "Enzo Fernandez", "Alexis Mac Allister", "Rodrigo De Paul", "Exequiel Palacios", "Leandro Paredes", "Team Photo", "Nico Paz", "Franco Mastantuono", "Nico Gonzalez", "Lionel Messi", "Lautaro Martinez", "Julian Alvarez", "Giuliano Simeone"] },
+            "AUS": { "name": "Avustralya", "color": "#ffcd00", "items": ["Team Logo", "Mathew Ryan", "Joe Gauci", "Harry Souttar", "Alessandro Circati", "Jordan Bos", "Aziz Behich", "Cameron Burgess", "Lewis Miller", "Milos Degenek", "Jackson Irvine", "Riley McGree", "Team Photo", "Aiden O'Neill", "Connor Metcalfe", "Patrick Yazbek", "Craig Goodwin", "Kusini Vengi", "Nestory Irankunda", "Mohamed Touré"] },
+            "AUT": { "name": "Avusturya", "color": "#c60b1e", "items": ["Team Logo", "Alexander Schlager", "Patrick Pentz", "David Alaba", "Kevin Danso", "Philipp Lienhart", "Stefan Posch", "Phillipp Mwene", "Alexander Prass", "Xaver Schlager", "Marcel Sabitzer", "Konrad Laimer", "Team Photo", "Florian Grillitsch", "Nicolas Seiwald", "Romano Schmid", "Patrick Wimmer", "Christoph Baumgartner", "Michael Gregoritsch", "Marko Arnautović"] },
+            "BEL": { "name": "Belçika", "color": "#e30613", "items": ["Team Logo", "Thibaut Courtois", "Arthur Theate", "Timothy Castagne", "Zeno Debast", "Brandon Mechele", "Maxim De Cuyper", "Thomas Meunier", "Youri Tielemans", "Amadou Onana", "Nicolas Raskin", "Alexis Saelemaekers", "Team Photo", "Hans Vanaken", "Kevin De Bruyne", "Jérémy Doku", "Charles De Ketelaere", "Leandro Trossard", "Loïs Openda", "Romelu Lukaku"] },
+            "BIH": { "name": "Bosna Hersek", "color": "#002395", "items": ["Team Logo", "Nikola Vasilj", "Amer Dedic", "Sead Kolasinac", "Tarik Muharemovic", "Nihad Mujakic", "Nikola Katic", "Amir Hadziahmetovic", "Benjamin Tahirovic", "Armin Gigovic", "Ivan Sunjic", "Ivan Basic", "Team Photo", "Dzenis Burnic", "Esmir Bajraktarevic", "Amar Memic", "Ermedin Demirovic", "Edin Dzeko", "Samed Bazdar", "Haris Tabakovic"] },
+            "BRA": { "name": "Brezilya", "color": "#ffdf00", "items": ["Team Logo", "Alisson", "Bento", "Marquinhos", "Éder Militão", "Gabriel Magalhães", "Danilo", "Wesley", "Lucas Paquetá", "Casemiro", "Bruno Guimarães", "Luiz Henrique", "Team Photo", "Vinicius Júnior", "Rodrygo", "João Pedro", "Matheus Cunha", "Gabriel Martinelli", "Raphinha", "Estévão"] },
+            "CAN": { "name": "Kanada", "color": "#ff0000", "items": ["Team Logo", "Dayne St.Clair", "Alphonso Davies", "Alistair Johnston", "Samuel Adekugbe", "Riche Larvea", "Derek Cornelius", "Moïse Bombito", "Kamal Miller", "Stephen Eustáquio", "Ismaël Koné", "Jonathan Osorio", "Team Photo", "Jacob Shaffelburg", "Mathieu Choinière", "Niko Sigur", "Tajon Buchanan", "Liam Millar", "Cyle Larin", "Jonathan David"] },
+            "CPV": { "name": "Yeşil Burun Adaları", "color": "#003893", "items": ["Team Logo", "Vozinha", "Logan Costa", "Pico", "Diney", "Steven Moreira", "Wagner Pina", "Joao Paulo", "Yannick Semedo", "Kevin Pina", "Patrick Andrade", "Jamiro Monteiro", "Team Photo", "Deroy Duarte", "Garry Rodrigues", "Jovane Cabral", "Ryan Mendes", "Dailon Livramento", "Willy Semedo", "Bebe"] },
+            "COL": { "name": "Kolombiya", "color": "#fcd116", "items": ["Team Logo", "Camilo Vargas", "David Ospina", "Dávinson Sánchez", "Yerry Mina", "Daniel Munoz", "Johan Mojica", "Jhon Lucumí", "Santiago Arias", "Jefferson Lerma", "Kevin Castaño", "Richard Rios", "Team Photo", "James Rodriguez", "Juan Fernando Quintero", "Jorge Carrascal", "Jon Arias", "Jhon Cordova", "Luis Suarez", "Luis Diaz"] },
+            "COD": { "name": "Kongo DC", "color": "#007fff", "items": ["Team Logo", "Lionel Mpasi", "Aaron Wan-Bissaka", "Axel Tuanzebe", "Arthur Masuaku", "Chancel Mbemba", "Joris Kayembe", "Charles Pickel", "Ngal'ayel Mukau", "Edo Kayembe", "Samuel Moutoussamy", "Noah Sadiki", "Team Photo", "Théo Bongonda", "Meschak Elia", "Yoane Wissa", "Brian Cipenga", "Fiston Mayele", "Cédric Bakambu", "Nathanaël Mbuku"] },
+            "CRO": { "name": "Hırvatistan", "color": "#ff0000", "items": ["Team Logo", "Dominik Livaković", "Duje Caleta-Car", "Josko Gvardiol", "Josip Stanišić", "Luka Vušković", "Josip Sutalo", "Kristijan Jakic", "Luka Modrić", "Mateo Kovacic", "Martin Baturina", "Lovro Majer", "Team Photo", "Mario Pasalic", "Petar Sucic", "Ivan Perišić", "Marco Pasalic", "Ante Budimir", "Andrej Kramarić", "Franjo Ivanovic"] },
+            "CUW": { "name": "Curaçao", "color": "#002b7f", "items": ["Team Logo", "Eloy Room", "Armando Obispo", "Sherel Floranus", "Jurien Gaari", "Joshua Brenet", "Roshon Van Eijma", "Shurandy Sambo", "Livano Comenencia", "Godfried Roemeratoe", "Juninho Bacuna", "Leandro Bacuna", "Team Photo", "Tahith Chong", "Kenji Gorre", "Jearl Margaritha", "Jurgen Locadia", "Jeremy Antonisse", "Gervane Kastaneer", "Sontje Hansen"] },
+            "CZE": { "name": "Çekya", "color": "#11457e", "items": ["Team Logo", "Matej Kovar", "Jindrich Stanek", "Ladislav Krejci", "Vladimir Coufal", "Jaroslav Zeleny", "Tomas Holes", "David Zima", "Michal Sadilek", "Lukas Provod", "Lukas Cerv", "Tomas Soucek", "Team Photo", "Pavel Sulc", "Matej Vydra", "Vasil Kusej", "Tomas Chory", "Vaclav Cerny", "Adam Hlozek", "Patrik Schick"] },
+            "ECU": { "name": "Ekvador", "color": "#ffcc00", "items": ["Team Logo", "Hernán Galíndez", "Gonzalo Valle", "Piero Hincapié", "Pervis Estupiñán", "Willian Pacho", "Ángelo Preciado", "Joel Ordóñez", "Moises Caicedo", "Alan Franco", "Kendry Paez", "Pedro Vite", "Team Photo", "John Veboah", "Leonardo Campana", "Gonzalo Plata", "Nilson Angulo", "Alan Minda", "Kevin Rodriguez", "Enner Valencia"] },
+            "EGY": { "name": "Mısır", "color": "#ce1126", "items": ["Team Logo", "Mohamed El Shenawy", "Mohamed Hany", "Mohamed Hamdy", "Yasser Ibrahim", "Khaled Sobhi", "Ramy Rabia", "Hossam Abdelmaguid", "Ahmed Fatouh", "Marwan Attia", "Zizo", "Hamdy Fathy", "Team Photo", "Mohamed Lasheen", "Emam Ashour", "Osama Faisal", "Mohamed Salah", "Mostafa Mohamed", "Trezeguet", "Omar Marmoush"] },
+            "ENG": { "name": "İngiltere", "color": "#ffffff", "items": ["Team Logo", "Jordan Pickford", "John Stones", "Marc Guéhi", "Ezri Konsa", "Trent Alexander-Arnold", "Reece James", "Dan Burn", "Jordan Henderson", "Declan Rice", "Jude Bellingham", "Cole Palmer", "Team Photo", "Morgan Rogers", "Anthony Gordon", "Phil Foden", "Bukayo Saka", "Harry Kane", "Marcus Rashford", "Ollie Watkins"] },
+            "FRA": { "name": "Fransa", "color": "#002395", "items": ["Team Logo", "Mike Maignan", "Theo Hernandez", "William Saliba", "Jules Kounde", "Ibrahima Konate", "Dayot Upamecano", "Lucas Digne", "Aurélien Tchouaméni", "Eduardo Camavinga", "Manu Kone", "Adrien Rabiot", "Team Photo", "Michael Olise", "Ousmane Dembele", "Bradley Barcola", "Désiré Doué", "Kingsley Coman", "Hugo Ekitike", "Kylian Mbappe"] },
+            "GER": { "name": "Almanya", "color": "#ffffff", "items": ["Team Logo", "Marc-André ter Stegen", "Jonathan Tah", "David Raum", "Nico Schlotverbeck", "Antonio Rüdiger", "Waldemar Anton", "Ridle Baku", "Maximilian Mittelstadt", "Joshua Kimmich", "Florian Wirtz", "Felix Nmecha", "Team Photo", "Leon Goretzka", "Jamal Musiala", "Serge Gnabry", "Kai Havertz", "Leroy Sane", "Karim Adeyemi", "Nick Woltemade"] },
+            "GHA": { "name": "Gana", "color": "#fcd116", "items": ["Team Logo", "Lawrence Ati Zigi", "Tariq Lamptey", "Mohammed Salisu", "Alidu Seidu", "Alexander Djiku", "Gideon Mensah", "Caleb Yirenkyi", "Abdul Issahaku Fatawu", "Thomas Partey", "Salis Abdul Samed", "Kamaldeen Sulemana", "Team Photo", "Mohammed Kudus", "Inaki Williams", "Jordan Ayew", "Andrew Ayew", "Joseph Paintsil", "Osman Bukari", "Antoine Semenyo"] },
+            "HAI": { "name": "Haiti", "color": "#4176df", "items": ["Team Logo", "Johny Placide", "Carlens Arcus", "Martin Expérience", "Jean-Kevin Duverne", "Ricardo Adé", "Duke Lacroix", "Garven Metusala", "Hannes Delcroix", "Leverton Pierre", "Danley Jean Jacques", "Jean-Ricner Bellegarde", "Team Photo", "Christopher Attys", "Derrick Etienne Jr", "Josue Casimir", "Ruben Providence", "Duckens Nazon", "Louicius Deedson", "Frantzdy Pierrot"] },
+            "IRN": { "name": "İran", "color": "#da2128", "items": ["Team Logo", "Alireza Beiranvand", "Morteza Pouraliganji", "Ehsan Hajsafi", "Milad Mohammadi", "Shojae Khalilzadeh", "Ramin Rezaeian", "Hossein Kanaani", "Sadegh Moharrami", "Saleh Hardani", "Saeed Ezatolahi", "Saman Ghoddos", "Team Photo", "Omid Noorafkan", "Roozbeh Cheshmi", "Mohammad Mohebi", "Sardar Azmoun", "Mehdi Taremi", "Alireza Jahanbakhsh", "Ali Gholizadeh"] },
+            "IRQ": { "name": "Irak", "color": "#007a3d", "items": ["Team Logo", "Jalal Hassan", "Rebin Sulaka", "Hussein Ali", "Akam Hashem", "Merchas Doski", "Zaid Tahseen", "Manaf Younis", "Zidane Iqbal", "Amir Al-Ammari", "Ibrahim Bayesh", "Ali Jasim", "Team Photo", "Youssef Amyn", "Aimar Sher", "Marko Farji", "Osama Rashid", "Ali Al-Hamadi", "Aymen Hussein", "Mohanad Ali"] },
+            "CIV": { "name": "Fildişi Sahili", "color": "#ff8200", "items": ["Team Logo", "Yahia Fofana", "Ghislain Konan", "Wilfried Singo", "Odilon Kossounou", "Evan Ndicka", "Willy Boly", "Emmanuel Agbadou", "Ousmane Diomande", "Franck Kessie", "Seko Fofana", "Ibrahim Sangare", "Team Photo", "Jean-Philippe Gbamin", "Amad Diallo", "Sébastien Haller", "Simon Adingra", "Yan Diomande", "Evann Guessand", "Oumar Diakite"] },
+            "JPN": { "name": "Japonya", "color": "#004b87", "items": ["Team Logo", "Zion Suzuki", "Henry Heroki Mochizuki", "Ayumu Seko", "Junnosuke Suzuki", "Shogo Taniguchi", "Tsuyoshi Watanabe", "Kaishu Sano", "Yuki Soma", "Ao Tanaka", "Daichi Kamada", "Takefusa Kubo", "Team Photo", "Ritsu Doan", "Keito Nakamura", "Takumi Minamino", "Shuto Machino", "Junya Ito", "Koki Ogawa", "Ayase Ueda"] },
+            "JOR": { "name": "Ürdün", "color": "#ce1126", "items": ["Team Logo", "Yazeed Abulaila", "Ihsan Haddad", "Mohammad Abu Hashish", "Yazan Al-Arab", "Abdallah Nasib", "Saleem Obaid", "Mohammad Abualnadi", "Ibrahim Saadeh", "Nizar Al-Rashdan", "Noor Al-Rawabdeh", "Mohannad Abu Taha", "Team Photo", "Amer Jamous", "Musa Al-Taamari", "Yazan Al-Naimat", "Mahmoud Al-Mardi", "Ali Olwan", "Mohammad Abu Zrayq", "Ibrahim Sabra"] },
+            "MEX": { "name": "Meksika", "color": "#006847", "items": ["Team Logo", "Luis Malagón", "Johan Vasquez", "Jorge Sánchez", "Cesar Montes", "Jesus Gallardo", "Israel Reyes", "Diego Lainez", "Carlos Rodriguez", "Edson Alvarez", "Orbelin Pineda", "Marcel Ruiz", "Team Photo", "Érick Sánchez", "Hirving Lozano", "Santiago Giménez", "Raúl Jiménez", "Alexis Vega", "Roberto Alvarado", "Cesar Huerta"] },
+            "MAR": { "name": "Fas", "color": "#c1272d", "items": ["Team Logo", "Yassine Bounou", "Munir El Kajoui", "Achraf Hakimi", "Noussair Mazraoui", "Nayef Aguerd", "Roman Saiss", "Jawad El Yamiq", "Adam Masina", "Sofyan Amrabat", "Azzedine Ounahi", "Eliesse Ben Seghir", "Team Photo", "Bilal El Khannouss", "Ismael Saibari", "Youssef En-Nesyri", "Abde Ezzalzouli", "Soufiane Rahimi", "Brahim Diaz", "Ayoub El Kaabi"] },
+            "NED": { "name": "Hollanda", "color": "#ff4f00", "items": ["Team Logo", "Bart Verbruggen", "Virgil van Dijk", "Micky van de Ven", "Jurrien Timber", "Denzel Dumfries", "Nathan Aké", "Jeremie Frimpong", "Jan Paul van Hecke", "Tijjani Reijnders", "Ryan Gravenberch", "Teun Koopmeiners", "Team Photo", "Frenkie de Jong", "Xavi Simons", "Justin Kluivert", "Memphis Depay", "Donyell Malen", "Wout Weghorst", "Cody Gakpo"] },
+            "NZL": { "name": "Yeni Zelanda", "color": "#00247d", "items": ["Team Logo", "Max Crocombe Payne", "Alex Paulsen", "Michael Boxall", "Liberato Cacace", "Tim Payne", "Tyler Bindon", "Francis de Vries", "Finn Surman", "Joe Bell", "Sarpreet Singh", "Ryan Thomas", "Team Photo", "Matthew Garbett", "Marko Stamenić", "Ben Old", "Chris Wood", "Elijah Just", "Callum McCowatt", "Kosta Barbarouses"] },
+            "NOR": { "name": "Norveç", "color": "#ef2b2d", "items": ["Team Logo", "Orjan Nyland", "Julian Ryerson", "Leo Ostigård", "Kristoffer Vassbakk Ajer", "Marcus Holmgren Pedersen", "David Møller Wolfe", "Torbjørn Heggem", "Morten Thorsby", "Martin Ødegaard", "Sander Berge", "Andreas Schjelderup", "Team Photo", "Patrick Berg", "Erling Haaland", "Alexander Sørloth", "Aron Dønnum", "Jorgen Strand Larsen", "Antonio Nusa", "Oscar Bobb"] },
+            "PAN": { "name": "Panama", "color": "#da121a", "items": ["Team Logo", "Orlando Mosquera", "Luis Mejia", "Fidel Escobar", "Andres Andrade", "Michael Amir Murillo", "Eric Davis", "Jose Cordoba", "Cesar Blackman", "Cristian Martinez", "Aníbal Godoy", "Adalberto Carrasquilla", "Team Photo", "Édgar Bárcenas", "Carlos Harvey", "Ismael Díaz", "Jose Fajardo", "Cecilio Waterman", "Jose Luiz Rodriguez", "Alberto Quintero"] },
+            "PAR": { "name": "Paraguay", "color": "#d52b1e", "items": ["Team Logo", "Roberto Fernandez", "Orlando Gill", "Gustavo Gomez", "Fabián Balbuena", "Juan José Cáceres", "Omar Alderete", "Junior Alonso", "Mathías Villasanti", "Diego Gomez", "Damián Bobadilla", "Andres Cubas", "Team Photo", "Matias Galarza Fonda", "Julio Enciso", "Alejandro Romero Gamarra", "Miguel Almirón", "Ramon Sosa", "Angel Romero", "Antonio Sanabria"] },
+            "POR": { "name": "Portekiz", "color": "#ff0000", "items": ["Team Logo", "Diogo Costa", "Jose Sa", "Ruben Dias", "João Cancelo", "Diogo Dalot", "Nuno Mendes", "Gonçalo Inácio", "Bernardo Silva", "Bruno Fernandes", "Ruben Neves", "Vitinha", "Team Photo", "João Neves", "Cristiano Ronaldo", "Francisco Trincao", "João Felix", "Gonçalo Ramos", "Pedro Neto", "Rafael Leão"] },
+            "QAT": { "name": "Katar", "color": "#8a1538", "items": ["Team Logo", "Meshaal Barsham", "Sultan Albrake", "Lucas Mendes", "Homam Ahmed", "Boualem Khoukhi", "Pedro Miguel", "Tarek Salman", "Mohamed Al-Mannai", "Karim Boudiaf", "Assim Madibo", "Ahmed Fatehi", "Team Photo", "Mohammed Waad", "Abdulaziz Hatem", "Hassan Al-Haydos", "Edmilson Junior", "Akram Hassan Afif", "Ahmed Al Ganehi", "Almoez Ali"] },
+            "KSA": { "name": "Suudi Arabistan", "color": "#006c35", "items": ["Team Logo", "Nawaf Alaqidi", "Abdulrahman Al-Sanbi", "Saud Abdulhamid", "Nawaf Bouwashl", "Jihad Thakri", "Moteb Al-Harbi", "Hassan Altambakti", "Musab Aljuwayr", "Ziyad Aljohani", "Abdullah Alkhaibari", "Nasser Aldawsari", "Team Photo", "Saleh Abu Alshamat", "Marwan Alsahafi", "Salem Aldawsari", "Abdulrahman Al-Aboud", "Feras Akbrikan", "Saleh Alshehri", "Abdullah Al-Hamdan"] },
+            "SCO": { "name": "İskoçya", "color": "#005eb8", "items": ["Team Logo", "Angus Gunn", "Jack Hendry", "Kieran Tierney", "Aaron Hickey", "Andrew Robertson", "Scott McKenna", "John Souttar", "Anthony Ralston", "Grant Hanley", "Scott McTominay", "Billy Gilmour", "Team Photo", "Lewis Ferguson", "Ryan Christie", "Kenny McLean", "John McGinn", "Lyndon Dykes", "Che Adams", "Ben Gannon-Doak"] },
+            "SEN": { "name": "Senegal", "color": "#fcd116", "items": ["Team Logo", "Edouard Mendy", "Yehvann Diouf", "Moussa Niakhaté", "Abdoulaye Seck", "Ismail Jakobs", "El Hadji Malick Diouf", "Kalidou Koulibaly", "Idrissa Gana Gueye", "Pape Matar Sarr", "Pape Gueye", "Habib Diarra", "Team Photo", "Lamine Camara", "Sadio Mane", "Ismaïla Sarr", "Boulaye Dia", "Iliman Ndiaye", "Nicolas Jackson", "Krepin Diatta"] },
+            "RSA": { "name": "Güney Afrika", "color": "#007a4d", "items": ["Team Logo", "Ronwen Williams", "Sipho Chaine", "Aubrey Modiba", "Samukele Kabini", "Mbekezeli Mbokazi", "Khulumani Ndamane", "Siyabonga Ngezana", "Khuliso Mudau", "Nkosinathi Sibisi", "Teboho Mokoena", "Thalente Mbatha", "Team Photo", "Bathasi Aubaas", "Yaya Sithole", "Sipho Mbule", "Lyle Foster", "Iqraam Rayners", "Mohau Nkota", "Oswin Appollis"] },
+            "KOR": { "name": "Güney Kore", "color": "#cd2e3a", "items": ["Team Logo", "Hyeon-woo Jo", "Seung-Gyu Kim", "Min-jae Kim", "Yu-min Cho", "Young-woo Seol", "Han-beom Lee", "Tae-seok Lee", "Myung-jae Lee", "Jae-sung Lee", "In-beom Hwang", "Kang-in Lee", "Team Photo", "Seung-ho Paik", "Jens Castrop", "Dongg-yeong Lee", "Gue-sung Cho", "Heung-min Son", "Hee-chan Hwang", "Hyeon-Gyu Oh"] },
+            "ESP": { "name": "İspanya", "color": "#c60b1e", "items": ["Team Logo", "Unai Simon", "Robin Le Normand", "Aymeric Laporte", "Dean Huijsen", "Pedro Porro", "Dani Carvajal", "Marc Cucurella", "Martín Zubimendi", "Rodri", "Pedri", "Fabian Ruiz", "Team Photo", "Mikel Merino", "Lamine Yamal", "Dani Olmo", "Nico Williams", "Ferran Torres", "Álvaro Morata", "Mikel Oyarzabal"] },
+            "SWE": { "name": "İsveç", "color": "#006aa7", "items": ["Team Logo", "Victor Johansson", "Isak Hien", "Gabriel Gudmundsson", "Emil Holm", "Victor Nilsson Lindelöf", "Gustaf Lagerbielke", "Lucas Bergvall", "Hugo Larsson", "Jesper Karlström", "Yasin Ayari", "Mattias Svanberg", "Team Photo", "Daniel Svensson", "Ken Sema", "Roony Bardghji", "Dejan Kulusevski", "Anthony Elanga", "Alexander Isak", "Viktor Gyökeres"] },
+            "SUI": { "name": "İsviçre", "color": "#d52b1e", "items": ["Team Logo", "Gregor Kobel", "Yvon Mvogo", "Manuel Akanji", "Ricardo Rodriguez", "Nico Elvedi", "Aurèle Amenda", "Silvan Widmer", "Granit Xhaka", "Denis Zakaria", "Remo Freuler", "Fabian Rieder", "Team Photo", "Ardon Jashari", "Johan Manzambi", "Michel Aebischer", "Breel Embolo", "Ruben Vargas", "Dan Ndoye", "Zeki Amdouni"] },
+            "TUN": { "name": "Tunus", "color": "#e70013", "items": ["Team Logo", "Bechir Ben Said", "Aymen Dahmen", "Yan Valery", "Montassar Talbi", "Yassine Meriah", "Ali Abdi", "Dylan Bronn", "Ellyes Skhiri", "Aissa Laidouni", "Ferjani Sassi", "Mohamed Ali Ben Romdhane", "Team Photo", "Hannibal Mejbri", "Elias Achouri", "Elias Saad", "Hazem Mastouri", "Ismael Gharbi", "Sayfallah Ltaief", "Naim Sliti"] },
+            "TUR": { "name": "Türkiye", "color": "#e30a17", "items": ["Team Logo", "Ugurcan Cakir", "Mert Muldur", "Zeki Celik", "Abdulkerim Bardakci", "Caglar Soyuncu", "Merih Demiral", "Ferdi Kadioglu", "Kaan Ayhan", "Ismail Yuksek", "Hakan Calhanoglu", "Orkun Kokcu", "Team Photo", "Arda Guler", "Irfan Can Kahveci", "Yunus Akgun", "Can Uzun", "Baris Alper Yilmaz", "Kerem Akturkoglu", "Kenan Yildiz"] },
+            "URU": { "name": "Uruguay", "color": "#55b3ff", "items": ["Team Logo", "Sergio Rochet", "Santiago Mele", "Ronald Araujo", "José María Giménez", "Sebastian Caceres", "Mathias Olivera", "Guillermo Varela", "Nahitan Nandez", "Federico Valverde", "Giorgian De Arrascaeta", "Rodrigo Bentancur", "Team Photo", "Manuel Ugarte", "Nicolás de la Cruz", "Maxi Araujo", "Darwin Núñez", "Federico Viñas", "Rodrigo Aguirre", "Facundo Pellistri"] },
+            "USA": { "name": "ABD", "color": "#002868", "items": ["Team Logo", "Math Freese", "Chris Richards", "Tim Ream", "Mark McKenzie", "Alex Freeman", "Antonee Robinson", "Tyler Adams", "Tanner Tessmann", "Weston McKenny", "Christian Roldan", "Timothy Weah", "Team Photo", "Diego Luna", "Malik Tillman", "Christian Pulisic", "Brenden Aaronson", "Ricardo Pepi", "Haji Wright", "Folarin Balogun"] },
+            "UZB": { "name": "Özbekistan", "color": "#00b5e2", "items": ["Team Logo", "Utkir Yusupov", "Farrukh Savfiev", "Sherzod Nasrullaev", "Umar Eshmurodov", "Husniddin Aliqulov", "Rustamjon Ashurmatov", "Khojiakbar Alijonov", "Abdukodir Khusanov", "Odiljon Hamrobekov", "Otabek Shukurov", "Jamshid Iskanderov", "Team Photo", "Azizbek Turgunboev", "Khojimat Erkinov", "Eldor Shomurodov", "Oston Urunov", "Jaloliddin Masharipov", "Igor Sergeev", "Abbosbek Fayzullaev"] }
         };
 
         const container = document.getElementById('album-container');
         const searchInput = document.getElementById('search-input');
         const searchResults = document.getElementById('search-results');
 
-        // Dinamik Kart Üretimi
+        // Dinamik 1-20 Kart Arayüzünün Üretilmesi
         Object.keys(dataset).forEach(code => {
             const team = dataset[code];
             const box = document.createElement('div');
             box.className = 'team-box';
             box.style.setProperty('--team-color', team.color);
 
-            let slotsHtml = `
-                <div class="slot special" data-id="${code}_1"><span class="slot-num">${code} 1</span>LOGM (Logo)</div>
-                <div class="slot special" data-id="${code}_2"><span class="slot-num">${code} 2</span>KADRO FOTO</div>
-            `;
-
-            team.players.forEach((playerName, index) => {
-                const stickerNum = index + 3;
+            let slotsHtml = '';
+            team.items.forEach((itemName, index) => {
+                const stickerNum = index + 1;
+                const isSpecial = (stickerNum === 1 || stickerNum === 13);
+                
                 slotsHtml += `
-                    <div class="slot" data-id="${code}_${stickerNum}">
-                        <span class="slot-num">${code} ${stickerNum}</span>${playerName}
+                    <div class="slot ${isSpecial ? 'special' : ''}" data-id="${code}_${stickerNum}">
+                        <span class="slot-num">${code} ${stickerNum}</span>${itemName}
                     </div>`;
             });
 
             box.innerHTML = `
                 <div class="team-header" style="color: ${team.color === '#ffffff' ? '#ffffff' : 'color-mix(in srgb, ' + team.color + ' 80%, #ffffff)'}">
-                    <span>${team.flag} ${team.name} (${code})</span>
+                    <span>${team.name}</span>
                 </div>
+                <div class="modern-badge">${code}</div>
                 <div class="slots-grid">${slotsHtml}</div>
             `;
             container.appendChild(box);
         });
 
-        // Canlı Arama Motoru (Kesilen Kısmın Tamamı)
+        // Durum Yönetimi (State & LocalStorage)
+        let ownedStickers = JSON.parse(localStorage.getItem('owned_stickers')) || [];
+        
+        function updateStats() {
+            const totalSlots = document.querySelectorAll('.slot').length;
+            const ownedSlots = document.querySelectorAll('.slot.owned').length;
+            const missingSlots = totalSlots - ownedSlots;
+            const ratio = totalSlots > 0 ? Math.round((ownedSlots / totalSlots) * 100) : 0;
+
+            document.getElementById('total-slots').innerText = totalSlots;
+            document.getElementById('owned-slots').innerText = ownedSlots;
+            document.getElementById('missing-slots').innerText = missingSlots;
+            document.getElementById('ratio-slots').innerText = `%${ratio}`;
+        }
+
+        // Tıklama ve Seçim Arayüzü Eşitlemesi
+        function applyOwnedClasses() {
+            document.querySelectorAll('.slot').forEach(slot => {
+                const id = slot.getAttribute('data-id');
+                if(ownedStickers.includes(id)) {
+                    slot.classList.add('owned');
+                } else {
+                    slot.classList.remove('owned');
+                }
+            });
+        }
+
+        document.querySelectorAll('.slot').forEach(slot => {
+            const id = slot.getAttribute('data-id');
+
+            slot.addEventListener('click', () => {
+                slot.classList.toggle('owned');
+                if(slot.classList.contains('owned')) {
+                    if(!ownedStickers.includes(id)) ownedStickers.push(id);
+                } else {
+                    ownedStickers = ownedStickers.filter(item => item !== id);
+                }
+                localStorage.setItem('owned_stickers', JSON.stringify(ownedStickers));
+                updateStats();
+            });
+        });
+
+        // Gelişmiş Arama Motoru
         searchInput.addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
             searchResults.innerHTML = '';
@@ -394,111 +457,55 @@
 
             Object.keys(dataset).forEach(code => {
                 const team = dataset[code];
-                
-                // Logoları ve kadro fotoğraflarını da isme göre aratabilmek için dahil ediyoruz
-                if (`${team.name} logo`.toLowerCase().includes(query) || "logo".includes(query)) {
-                    matches.push({ name: "Takım Logosu", teamName: team.name, flag: team.flag, id: `${code}_1` });
-                }
-                if (`${team.name} kadro foto`.toLowerCase().includes(query) || "kadro".includes(query)) {
-                    matches.push({ name: "Kadro Fotoğrafı", teamName: team.name, flag: team.flag, id: `${code}_2` });
-                }
+                const teamMatch = team.name.toLowerCase().includes(query) || code.toLowerCase().includes(query);
 
-                team.players.forEach((playerName, index) => {
-                    if (playerName.toLowerCase().includes(query)) {
-                        matches.push({
-                            name: playerName,
-                            teamName: team.name,
-                            flag: team.flag,
-                            id: `${code}_${index + 3}`
+                team.items.forEach((itemName, index) => {
+                    const stickerNum = index + 1;
+                    if(itemName.toLowerCase().includes(query) || teamMatch || `${code} ${stickerNum}`.toLowerCase().includes(query)) {
+                        matches.push({ 
+                            name: itemName, 
+                            teamName: team.name, 
+                            id: `${code}_${stickerNum}` 
                         });
                     }
                 });
             });
 
-            if (matches.length > 0) {
-                matches.forEach(player => {
+            if(matches.length > 0) {
+                searchResults.style.display = 'block';
+                matches.slice(0, 30).forEach(match => {
                     const item = document.createElement('div');
                     item.className = 'search-result-item';
                     item.innerHTML = `
-                        <span>${player.name}</span>
-                        <span class="team-info">${player.flag} ${player.teamName}</span>
+                        <span>${match.name}</span>
+                        <span class="team-info">${match.teamName} (${match.id.replace('_', ' ')})</span>
                     `;
-                    
-                    // Arama sonucuna tıklanınca karta git, parlat ve otomatik yapıştır
                     item.addEventListener('click', () => {
-                        const targetSlot = document.querySelector(`[data-id="${player.id}"]`);
-                        if (targetSlot) {
+                        const targetSlot = document.querySelector(`[data-id="${match.id}"]`);
+                        if(targetSlot) {
                             targetSlot.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            
-                            if (!targetSlot.classList.contains('owned')) {
-                                targetSlot.classList.add('owned');
-                                localStorage.setItem(player.id, '1');
-                                updateStats();
-                            }
-
                             targetSlot.classList.add('highlight-animation');
                             setTimeout(() => {
                                 targetSlot.classList.remove('highlight-animation');
-                            }, 3000); // 1.5s'lik animasyon x2 tekrar için 3 saniye
+                            }, 3000);
                         }
-                        
-                        searchInput.value = '';
                         searchResults.style.display = 'none';
+                        searchInput.value = '';
                     });
-
                     searchResults.appendChild(item);
                 });
-                searchResults.style.display = 'block';
             } else {
                 searchResults.style.display = 'none';
             }
         });
 
-        // Dışarı tıklanınca arama kutusunu kapatma
-        document.addEventListener('click', function(e) {
-            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        document.addEventListener('click', (e) => {
+            if(!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                 searchResults.style.display = 'none';
             }
         });
 
-        // Tıklama ile Kart Açma / Kapatma (Hafıza Tetikleyicili)
-        document.body.addEventListener('click', function(e) {
-            const slot = e.target.closest('.slot');
-            if (slot) {
-                const id = slot.getAttribute('data-id');
-                
-                slot.classList.toggle('owned');
-                if(slot.classList.contains('owned')) {
-                    localStorage.setItem(id, '1');
-                } else {
-                    localStorage.removeItem(id);
-                }
-                updateStats();
-            }
-        });
-
-        // Kayıtlı Kartları Hafızadan Geri Yükleme
-        document.querySelectorAll('.slot').forEach(slot => {
-            const id = slot.getAttribute('data-id');
-            if(localStorage.getItem(id) === '1') {
-                slot.classList.add('owned');
-            }
-        });
-
-        // İstatistikleri Canlı Güncelleyen Fonksiyon
-        function updateStats() {
-            const total = document.querySelectorAll('.slot').length;
-            const owned = document.querySelectorAll('.slot.owned').length;
-            const missing = total - owned;
-            const ratio = total > 0 ? ((owned / total) * 100).toFixed(1) : 0;
-
-            document.getElementById('total-slots').textContent = total;
-            document.getElementById('owned-slots').textContent = owned;
-            document.getElementById('missing-slots').textContent = missing;
-            document.getElementById('ratio-slots').textContent = `%${ratio}`;
-        }
-
-        // İlk açılışta istatistikleri hesapla
+        applyOwnedClasses();
         updateStats();
     </script>
 </body>
